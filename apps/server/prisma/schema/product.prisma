@@ -1,0 +1,50 @@
+model Category {
+  id       String  @id @default(cuid())
+  name     String
+  slug     String  @unique
+  icon     String?
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+
+  subcategories SubCategory[]
+  products      Product[]
+
+  @@index([slug])
+}
+
+model SubCategory {
+  id       String  @id @default(cuid())
+  name     String
+  slug     String  @unique
+  icon     String?
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+
+  categoryId String
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products   Product[]
+
+  @@index([categoryId])
+  @@index([slug])
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  brand         String?
+  model         String?
+  specs         Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  categoryId    String
+  subcategoryId String?
+
+  category    Category     @relation(fields: [categoryId], references: [id])
+  subcategory SubCategory? @relation(fields: [subcategoryId], references: [id])
+  ads         SellerAd[]
+
+  @@index([categoryId])
+  @@index([subcategoryId])
+}

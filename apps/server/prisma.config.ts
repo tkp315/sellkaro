@@ -8,13 +8,13 @@ const envFile = process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'pro
 
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: "prisma/schema/base.prisma",
   migrations: {
     path: "prisma/migrations",
     seed:'tsx prisma/seed.ts'
   },
   datasource: {
     url: process.env["DATABASE_URL"],
-    
+
   },
 });
