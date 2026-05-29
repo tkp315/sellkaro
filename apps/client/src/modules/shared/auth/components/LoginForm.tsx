@@ -48,12 +48,7 @@ export function LoginForm() {
       </div>
 
       <div>
-        <div className="mb-1.5 flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700">Password</label>
-          <Link to="/auth/forgot-password" className="text-xs text-[#002f34] hover:underline font-medium">
-            Forgot password?
-          </Link>
-        </div>
+        <label className="mb-1.5 block text-sm font-medium text-gray-700">Password</label>
         <div className="relative">
           <input
             {...register('password')}
@@ -72,6 +67,11 @@ export function LoginForm() {
           </button>
         </div>
         {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
+        <div className="mt-1.5 text-right">
+          <Link to="/auth/forgot-password" className="text-xs font-medium text-[#002f34] hover:underline">
+            Forgot password?
+          </Link>
+        </div>
       </div>
 
       {apiError && (

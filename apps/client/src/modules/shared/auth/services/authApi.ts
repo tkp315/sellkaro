@@ -2,6 +2,8 @@ import api from '@/lib/axios';
 import type { ApiResponse } from '@/types/api';
 import type {
   AuthResponse,
+  OtpSentResponse,
+  VerifyOtpDto,
   AuthUser,
   LoginDto,
   RegisterDto,
@@ -12,10 +14,16 @@ import type {
 
 export const authApi = {
   register: (dto: RegisterDto) =>
-    api.post<ApiResponse<AuthResponse>>('/auth/register', dto).then((r) => r.data.data!),
+    api.post<ApiResponse<OtpSentResponse>>('/auth/register', dto).then((r) => r.data.data!),
 
   login: (dto: LoginDto) =>
-    api.post<ApiResponse<AuthResponse>>('/auth/login', dto).then((r) => r.data.data!),
+    api.post<ApiResponse<OtpSentResponse>>('/auth/login', dto).then((r) => r.data.data!),
+
+  verifyOtp: (dto: VerifyOtpDto) =>
+    api.post<ApiResponse<AuthResponse>>('/auth/verify-otp', dto).then((r) => r.data.data!),
+
+  resendOtp: (email: string) =>
+    api.post('/auth/resend-otp', { email }),
 
   logout: (refreshToken: string) =>
     api.post('/auth/logout', { refreshToken }),

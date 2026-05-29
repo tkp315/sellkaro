@@ -32,10 +32,21 @@ export interface UpdateProfileDto {
   lat?: number;
   lng?: number;
   bio?: string;
+  avatar?: string;
 }
 
 export interface VerifyEmailDto {
   token: string;
+}
+
+export interface VerifyOtpDto {
+  email: string;
+  otp: string;
+}
+
+export interface OtpSentResponse {
+  requiresOtp: true;
+  email: string;
 }
 
 export interface RefreshTokenDto {

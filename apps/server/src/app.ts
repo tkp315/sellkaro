@@ -7,7 +7,12 @@ import apiRouter from './routes/index.js';
 
 const app = express();
 
+let initialized = false;
+
 async function init() {
+  if (initialized) return;
+  initialized = true;
+
   const config = await configLoader();
   setConfig(config);
 

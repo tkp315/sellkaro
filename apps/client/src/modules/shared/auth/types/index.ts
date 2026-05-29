@@ -29,6 +29,16 @@ export interface AuthResponse {
   tokens: AuthTokens;
 }
 
+export interface OtpSentResponse {
+  requiresOtp: true;
+  email: string;
+}
+
+export interface VerifyOtpDto {
+  email: string;
+  otp: string;
+}
+
 export interface LoginDto {
   email: string;
   password: string;
@@ -59,4 +69,5 @@ export interface UpdateProfileDto {
   lat?: number;
   lng?: number;
   bio?: string;
+  avatar?: string;
 }

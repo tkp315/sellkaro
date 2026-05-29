@@ -13,62 +13,52 @@ async function getUserEmail(userId: string): Promise<string | null> {
 }
 
 export async function notifyWelcome(userId: string, name: string, email: string) {
-  await Promise.all([
-    prisma.notification.create({
-      data: { userId, type: 'WELCOME', title: 'Welcome to OLX!', body: `Hi ${name}, your account is ready.` },
-    }),
-    sendEmail(email, 'Welcome to OLX! 🎉', welcomeEmail(name)),
-  ]);
+  try {
+    await Promise.all([
+      prisma.notification.create({
+        data: { userId, type: 'WELCOME', title: 'Welcome to OLX!', body: `Hi ${name}, your account is ready.` },
+      }),
+      sendEmail(email, 'Welcome to OLX! 🎉', welcomeEmail(name)),
+    ]);
+  } catch { /* notifications are non-critical */ }
 }
 
 export async function notifyNewMessage(receiverId: string, senderName: string, adTitle: string, chatId: string, preview: string) {
-  const email = await getUserEmail(receiverId);
-  const chatUrl = `${clientUrl()}/chats/${chatId}`;
-  await Promise.all([
-    prisma.notification.create({
-      data: {
-        userId: receiverId,
-        type: 'NEW_MESSAGE',
-        title: `New message from ${senderName}`,
-        body: preview,
-        data: { chatId },
-      },
-    }),
-    email ? sendEmail(email, `New message from ${senderName} – OLX`, newMessageEmail(senderName, adTitle, preview, chatUrl)) : Promise.resolve(),
-  ]);
+  try {
+    const email = await getUserEmail(receiverId);
+    const chatUrl = `${clientUrl()}/chats/${chatId}`;
+    await Promise.all([
+      prisma.notification.create({
+        data: { userId: receiverId, type: 'NEW_MESSAGE', title: `New message from ${senderName}`, body: preview, data: { chatId } },
+      }),
+      email ? sendEmail(email, `New message from ${senderName} – OLX`, newMessageEmail(senderName, adTitle, preview, chatUrl)) : Promise.resolve(),
+    ]);
+  } catch { /* notifications are non-critical */ }
 }
 
 export async function notifyInterestShown(sellerId: string, buyerName: string, adId: string, adTitle: string) {
-  const email = await getUserEmail(sellerId);
-  const adUrl = `${clientUrl()}/product/${adId}`;
-  await Promise.all([
-    prisma.notification.create({
-      data: {
-        userId: sellerId,
-        type: 'INTEREST_SHOWN',
-        title: `${buyerName} is interested in your ad`,
-        body: adTitle,
-        data: { adId },
-      },
-    }),
-    email ? sendEmail(email, `Someone is interested in "${adTitle}" – OLX`, interestShownEmail(buyerName, adTitle, adUrl)) : Promise.resolve(),
-  ]);
+  try {
+    const email = await getUserEmail(sellerId);
+    const adUrl = `${clientUrl()}/product/${adId}`;
+    await Promise.all([
+      prisma.notification.create({
+        data: { userId: sellerId, type: 'INTEREST_SHOWN', title: `${buyerName} is interested in your ad`, body: adTitle, data: { adId } },
+      }),
+      email ? sendEmail(email, `Someone is interested in "${adTitle}" – OLX`, interestShownEmail(buyerName, adTitle, adUrl)) : Promise.resolve(),
+    ]);
+  } catch { /* notifications are non-critical */ }
 }
 
 export async function notifyAdRemoved(sellerId: string, adTitle: string, adminNote?: string) {
-  const email = await getUserEmail(sellerId);
-  await Promise.all([
-    prisma.notification.create({
-      data: {
-        userId: sellerId,
-        type: 'AD_REMOVED_BY_ADMIN',
-        title: 'Your ad was removed',
-        body: adTitle,
-        data: { adminNote },
-      },
-    }),
-    email ? sendEmail(email, `Your ad "${adTitle}" was removed – OLX`, adRemovedEmail(adTitle, adminNote ?? '')) : Promise.resolve(),
-  ]);
+  try {
+    const email = await getUserEmail(sellerId);
+    await Promise.all([
+      prisma.notification.create({
+        data: { userId: sellerId, type: 'AD_REMOVED_BY_ADMIN', title: 'Your ad was removed', body: adTitle, data: { adminNote } },
+      }),
+      email ? sendEmail(email, `Your ad "${adTitle}" was removed – OLX`, adRemovedEmail(adTitle, adminNote ?? '')) : Promise.resolve(),
+    ]);
+  } catch { /* notifications are non-critical */ }
 }
 
 export async function getNotifications(userId: string, page = 1, limit = 20) {

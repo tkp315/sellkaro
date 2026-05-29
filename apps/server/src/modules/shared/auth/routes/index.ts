@@ -13,6 +13,8 @@ router.post('/google', ctrl.googleAuth);
 router.get('/verify-email', ctrl.verifyEmail);
 router.post('/forgot-password', ctrl.forgotPassword);
 router.post('/reset-password', ctrl.resetPassword);
+router.post('/verify-otp', ctrl.verifyOtp);
+router.post('/resend-otp', ctrl.resendOtp);
 
 // Protected
 router.get('/profile', authenticate, ctrl.getProfile);
