@@ -1,0 +1,357 @@
+model Report {
+  id        String       @id @default(cuid())
+  type      ReportType
+  reason    String
+  status    ReportStatus @default(PENDING)
+  adminNote String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  reportedById   String
+  reportedUserId String?
+  adId           String?
+
+  reportedBy   User      @relation("ReportedBy", fields: [reportedById], references: [id])
+  reportedUser User?     @relation("ReportedUser", fields: [reportedUserId], references: [id])
+  ad           SellerAd? @relation("ReportedAd", fields: [adId], references: [id])
+
+  @@index([status])
+  @@index([reportedById])
+}
+
+model AdminLog {
+  id         String          @id @default(cuid())
+  action     AdminActionType
+  targetType String
+  targetId   String
+  note       String?
+  createdAt  DateTime        @default(now())
+
+  adminId String
+  admin   User   @relation("AdminWhoActed", fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  phone            String?   @unique
+  password         String
+  role             Role      @default(BUYER)
+  isVerified       Boolean   @default(false)
+  isBanned         Boolean   @default(false)
+  emailVerifyToken String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  profile        Profile?
+  refreshTokens  RefreshToken[]
+  wishlist       Wishlist[]
+  cart           Cart?
+  ads            SellerAd[]
+  interests      InterestedUser[]
+  reportsMade    Report[]         @relation("ReportedBy")
+  reportsAgainst Report[]         @relation("ReportedUser")
+  activityLogs   ActivityLog[]
+  notifications  Notification[]
+  adminLogs      AdminLog[]       @relation("AdminWhoActed")
+
+  @@index([email])
+}
+
+model Profile {
+  id     String  @id @default(cuid())
+  name   String
+  avatar String?
+  city   String?
+  area   String?
+  lat    Float?
+  lng    Float?
+  bio    String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  adId   String
+
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ad   SellerAd @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, adId])
+  @@index([userId])
+}
+
+model Cart {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String     @unique
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  CartItem[]
+}
+
+model CartItem {
+  id           String   @id @default(cuid())
+  priceAtAdded Float
+  createdAt    DateTime @default(now())
+
+  cartId String
+  adId   String
+
+  cart Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  ad   SellerAd @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, adId])
+  @@index([cartId])
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  BUYER
+  SELLER
+  ADMIN
+  MODERATOR
+}
+
+enum Condition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+}
+
+enum AdStatus {
+  ACTIVE
+  PAUSED
+  SOLD
+  EXPIRED
+  REMOVED
+}
+
+enum ReportType {
+  AD
+  USER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum AdminActionType {
+  BAN_USER
+  UNBAN_USER
+  REMOVE_AD
+  APPROVE_AD
+  FEATURE_AD
+  UNFEATURE_AD
+  WARN_USER
+  RESOLVE_REPORT
+  DISMISS_REPORT
+}
+
+enum ActivityType {
+  VIEW_AD
+  SEARCH
+  LOGIN
+  LOGOUT
+  POST_AD
+  EDIT_AD
+  DELETE_AD
+  MARK_SOLD
+  SHOW_INTEREST
+}
+
+enum NotificationType {
+  WELCOME
+  NEW_MESSAGE
+  INTEREST_SHOWN
+  AD_SOLD
+  AD_EXPIRED
+  AD_REMOVED_BY_ADMIN
+  REPORT_RESOLVED
+  ACCOUNT_WARNED
+  ACCOUNT_BANNED
+}
+
+model SellerAd {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  condition   Condition
+  status      AdStatus  @default(ACTIVE)
+  city        String
+  area        String?
+  lat         Float?
+  lng         Float?
+  viewCount   Int       @default(0)
+  isFeatured  Boolean   @default(false)
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  userId    String
+  productId String
+
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product      Product          @relation(fields: [productId], references: [id])
+  images       AdImage[]
+  interests    InterestedUser[]
+  wishlistedBy Wishlist[]
+  cartItems    CartItem[]
+  reports      Report[]         @relation("ReportedAd")
+
+  @@index([userId])
+  @@index([productId])
+  @@index([status])
+  @@index([city])
+  @@index([isFeatured])
+  @@index([createdAt])
+}
+
+model AdImage {
+  id      String  @id @default(cuid())
+  url     String
+  order   Int     @default(0)
+  isCover Boolean @default(false)
+
+  adId String
+  ad   SellerAd @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@index([adId])
+}
+
+model InterestedUser {
+  id        String   @id @default(cuid())
+  message   String?
+  createdAt DateTime @default(now())
+
+  userId String
+  adId   String
+
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ad   SellerAd @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, adId])
+  @@index([adId])
+}
+
+model ActivityLog {
+  id        String       @id @default(cuid())
+  action    ActivityType
+  metadata  Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime     @default(now())
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  body      String
+  data      Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model Category {
+  id       String  @id @default(cuid())
+  name     String
+  slug     String  @unique
+  icon     String?
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+
+  subcategories SubCategory[]
+  products      Product[]
+
+  @@index([slug])
+}
+
+model SubCategory {
+  id       String  @id @default(cuid())
+  name     String
+  slug     String  @unique
+  icon     String?
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+
+  categoryId String
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products   Product[]
+
+  @@index([categoryId])
+  @@index([slug])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  brand       String?
+  model       String?
+  specs       Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId    String
+  subcategoryId String?
+
+  category    Category     @relation(fields: [categoryId], references: [id])
+  subcategory SubCategory? @relation(fields: [subcategoryId], references: [id])
+  ads         SellerAd[]
+
+  @@index([categoryId])
+  @@index([subcategoryId])
+}
