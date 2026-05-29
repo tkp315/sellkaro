@@ -1,13 +1,8 @@
-// // This is your Prisma schema file,
-// // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// // Get a free hosted Postgres database in seconds: `npx create-db`
-
-// generator client {
-//   provider = "prisma-client"
-//   output   = "../src/generated/prisma"
-// }
-
-// datasource db {
-//   provider = "postgresql"
-// }
+// Schema moved to prisma/schema/ folder (multi-file approach)
+// base.prisma    → generator + datasource
+// enum.prisma    → all enums
+// auth.prisma    → User, Profile, RefreshToken, Wishlist, Cart, CartItem
+// product.prisma → Category, SubCategory, Product
+// listing.prisma → SellerAd, AdImage, InterestedUser
+// admin.prisma   → Report, AdminLog
+// logs.prisma    → ActivityLog, Notification

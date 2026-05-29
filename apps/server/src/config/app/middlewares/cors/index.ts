@@ -14,10 +14,10 @@ async function corsConfig(): Promise<CorsConfig> {
   const originsString = process.env.CORS_ORIGINS || '';
   const origins = isProduction
     ? originsString.split(',').filter(Boolean)
-    : ['http://localhost:3000', 'http://localhost:8081']; //Dev: web + expo;
+    : ['http://localhost:5173', 'http://localhost:8081']; //Dev: web + expo;
 
   return {
-    origins,
+    origins:origins||'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
     exposedHeaders: ['X-Total-Count', 'X-Page', 'X-Limit'],

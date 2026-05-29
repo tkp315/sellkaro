@@ -1,0 +1,36 @@
+model Report {
+  id             String       @id @default(cuid())
+  type           ReportType
+  reason         String
+  status         ReportStatus @default(PENDING)
+  adminNote      String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  reportedById   String
+  reportedUserId String?
+  adId           String?
+
+  reportedBy   User      @relation("ReportedBy", fields: [reportedById], references: [id])
+  reportedUser User?     @relation("ReportedUser", fields: [reportedUserId], references: [id])
+  ad           SellerAd? @relation("ReportedAd", fields: [adId], references: [id])
+
+  @@index([status])
+  @@index([reportedById])
+}
+
+model AdminLog {
+  id         String          @id @default(cuid())
+  action     AdminActionType
+  targetType String
+  targetId   String
+  note       String?
+  createdAt  DateTime        @default(now())
+
+  adminId String
+  admin   User   @relation("AdminWhoActed", fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
+}

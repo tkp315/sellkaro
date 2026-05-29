@@ -24,7 +24,7 @@ async function initHelpers(
 
   for (const dir of helperDirs) {
     const module = await import(`./${dir}/index.js`);
-    const initFn = module.default ?? module.init;
+    const initFn = module.default?.init ?? module.init ?? module.default;
     if (typeof initFn === 'function') {
       const helperConfig = (config as Record<string, unknown>)[dir];
       helpers[dir] = await initFn(helperConfig, appObj);

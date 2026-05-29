@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(cross-env NODE_ENV=dev dotenv -e .env.dev -- npx prisma migrate dev --schema=./prisma/schema --name init)",
+      "Bash(npx dotenv *)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:Cqllyu5spLXRqpA6@db.wukrflwliwgqmjumrodj.supabase.co:5432/postgres\" npx prisma migrate dev --schema=./prisma/schema --name init)",
+      "Bash(timeout 20 npx vite --port 3000)",
+      "PowerShell(Get-Process *)",
+      "Bash(npx prisma *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(xargs grep -l \"admin\")"
     ]
   }
 }

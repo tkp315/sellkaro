@@ -1,0 +1,98 @@
+model SellerAd {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  condition   Condition
+  status      AdStatus  @default(ACTIVE)
+  city        String
+  area        String?
+  lat         Float?
+  lng         Float?
+  viewCount   Int       @default(0)
+  isFeatured  Boolean   @default(false)
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  userId    String
+  productId String
+
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product      Product          @relation(fields: [productId], references: [id])
+  images       AdImage[]
+  interests    InterestedUser[]
+  wishlistedBy Wishlist[]
+  cartItems    CartItem[]
+  reports      Report[]         @relation("ReportedAd")
+  chats        Chat[]
+
+  @@index([userId])
+  @@index([productId])
+  @@index([status])
+  @@index([city])
+  @@index([isFeatured])
+  @@index([createdAt])
+}
+
+model AdImage {
+  id      String  @id @default(cuid())
+  url     String
+  order   Int     @default(0)
+  isCover Boolean @default(false)
+
+  adId String
+  ad   SellerAd @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@index([adId])
+}
+
+model Chat {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  buyerId  String
+  sellerId String
+  adId     String
+
+  buyer    User      @relation("BuyerChats", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller   User      @relation("SellerChats", fields: [sellerId], references: [id], onDelete: Cascade)
+  ad       SellerAd  @relation(fields: [adId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@unique([buyerId, sellerId, adId])
+  @@index([buyerId])
+  @@index([sellerId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  isRead    Boolean  @default(false)
+
+  senderId String
+  chatId   String
+
+  sender User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  chat   Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId])
+  @@index([senderId])
+}
+
+model InterestedUser {
+  id        String   @id @default(cuid())
+  message   String?
+  createdAt DateTime @default(now())
+
+  userId String
+  adId   String
+
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ad   SellerAd @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, adId])
+  @@index([adId])
+}

@@ -1,0 +1,69 @@
+enum Role {
+  BUYER
+  SELLER
+  ADMIN
+  MODERATOR
+}
+
+enum Condition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+}
+
+enum AdStatus {
+  ACTIVE
+  PAUSED
+  SOLD
+  EXPIRED
+  REMOVED
+}
+
+enum ReportType {
+  AD
+  USER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum AdminActionType {
+  BAN_USER
+  UNBAN_USER
+  REMOVE_AD
+  APPROVE_AD
+  FEATURE_AD
+  UNFEATURE_AD
+  WARN_USER
+  RESOLVE_REPORT
+  DISMISS_REPORT
+}
+
+enum ActivityType {
+  VIEW_AD
+  SEARCH
+  LOGIN
+  LOGOUT
+  POST_AD
+  EDIT_AD
+  DELETE_AD
+  MARK_SOLD
+  SHOW_INTEREST
+}
+
+enum NotificationType {
+  WELCOME
+  NEW_MESSAGE
+  INTEREST_SHOWN
+  AD_SOLD
+  AD_EXPIRED
+  AD_REMOVED_BY_ADMIN
+  REPORT_RESOLVED
+  ACCOUNT_WARNED
+  ACCOUNT_BANNED
+}

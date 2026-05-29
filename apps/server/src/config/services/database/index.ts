@@ -1,15 +1,26 @@
-// import { PrismaClient } from '@prisma/client';
-// import { env } from '../../app/env/index.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// let instance: PrismaClient | null = null;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// const databaseConfig = () => {
-//   if (!instance) {
-//     instance = new PrismaClient({
-//       log: env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-//     });
-//   }
-//   return instance;
-// };
+async function databaseConfig() {
+  const items = fs.readdirSync(__dirname);
 
-// export default databaseConfig;
+  const subDirs = items.filter(item => {
+    return fs.statSync(path.join(__dirname, item)).isDirectory();
+  });
+
+  const configs = await Promise.all(
+    subDirs.map(async dir => {
+      const module = await import(`./${dir}/index.js`);
+      const config = typeof module.default === 'function' ? await module.default() : module.default;
+      return { [dir]: config };
+    })
+  );
+
+  return Object.assign({}, ...configs);
+}
+
+export default databaseConfig;
