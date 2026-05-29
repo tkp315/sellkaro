@@ -11,7 +11,18 @@
       "PowerShell(Get-Process *)",
       "Bash(npx prisma *)",
       "Bash(Get-ChildItem *)",
-      "Bash(xargs grep -l \"admin\")"
+      "Bash(xargs grep -l \"admin\")",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); deps={**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}; print\\('\\\\n'.join\\(k for k in deps if any\\(x in k for x in ['multer','cloudinary','aws','s3','sharp','mime']\\)\\)\\)\")",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); deps={**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}; [print\\(k,v\\) for k,v in deps.items\\(\\)]\")",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('cloudinary' in {**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}\\)\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('apps/server/package.json'\\)\\); deps={**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}; print\\('cloudinary:', 'cloudinary' in deps\\)\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('apps/server/tsconfig.json'\\)\\); print\\(json.dumps\\(d.get\\('compilerOptions',{}\\).get\\('paths',{}\\), indent=2\\)\\)\")",
+      "Bash(npx tsc *)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if k in ['scripts','dependencies','devDependencies']}, indent=2\\)\\)\")",
+      "Bash(xargs grep -l \"rateLimit\\\\|rate-limit\")",
+      "Bash(npm test *)",
+      "Bash(Get-Content \"C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--freelance-olx\\\\e2dd6972-e998-4124-bc5d-ffc686215492\\\\tasks\\\\bco8031mk.output\" -Wait)",
+      "Bash(Select-String -Pattern \".\")"
     ]
   }
 }

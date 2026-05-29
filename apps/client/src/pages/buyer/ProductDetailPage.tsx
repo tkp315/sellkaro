@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useAdDetail } from '@/modules/buyer/feed/hooks/useFeed';
 import { revealPhone } from '@/modules/buyer/feed/services/feedApi';
@@ -8,6 +8,7 @@ import { useAddToCart, useCartAdIds } from '@/modules/buyer/cart/hooks/useCart';
 import { useStartChat } from '@/modules/buyer/chat/hooks/useChat';
 import { useAuthStore } from '@/store/authStore';
 import { formatPrice, formatRelativeTime } from '@/utils/format';
+import { isVideoUrl } from '@/utils/media';
 import { useTheme } from '@/hooks/useTheme';
 import { getApiError } from '@/utils/apiError';
 import type { ConditionKey } from '@/lib/colors';
@@ -20,6 +21,15 @@ export default function ProductDetailPage() {
   const { theme, getConditionStyle } = useTheme();
   const { isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const requireAuth = () => {
+    if (!isAuthenticated) {
+      navigate('/auth/login', { state: { from: location } });
+      return false;
+    }
+    return true;
+  };
 
   const { data: wishlistIds = [] } = useWishlistIds();
   const toggleWishlist = useToggleWishlist();
@@ -33,9 +43,6 @@ export default function ProductDetailPage() {
   const revealPhoneMutation = useMutation({
     mutationFn: () => revealPhone(id!),
     onSuccess: (data) => setPhone(data.phone),
-    onError: () => {
-      if (!isAuthenticated) navigate('/auth/login');
-    },
   });
 
   if (isLoading) {
@@ -92,14 +99,23 @@ export default function ProductDetailPage() {
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         {/* Left: images + description */}
         <div>
-          {/* Main image */}
+          {/* Main image / video */}
           <div className="relative overflow-hidden rounded-2xl bg-gray-100 aspect-[4/3]">
             {ad.images[activeImg] ? (
-              <img
-                src={ad.images[activeImg]!.url}
-                alt={ad.title}
-                className="h-full w-full object-cover"
-              />
+              isVideoUrl(ad.images[activeImg]!.url) ? (
+                <video
+                  key={ad.images[activeImg]!.url}
+                  src={ad.images[activeImg]!.url}
+                  controls
+                  className="h-full w-full object-contain bg-black"
+                />
+              ) : (
+                <img
+                  src={ad.images[activeImg]!.url}
+                  alt={ad.title}
+                  className="h-full w-full object-cover"
+                />
+              )
             ) : (
               <div className="h-full flex flex-col items-center justify-center gap-2 text-gray-300">
                 <svg className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,10 +129,7 @@ export default function ProductDetailPage() {
             {/* Wishlist button on image */}
             {!isOwnAd && (
               <button
-                onClick={() => {
-                  if (!isAuthenticated) { navigate('/auth/login'); return; }
-                  toggleWishlist.mutate(ad.id);
-                }}
+                onClick={() => { if (requireAuth()) toggleWishlist.mutate(ad.id); }}
                 className="absolute top-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md transition hover:scale-110 active:scale-95"
               >
                 <svg
@@ -139,12 +152,23 @@ export default function ProductDetailPage() {
                 <button
                   key={img.id}
                   onClick={() => setActiveImg(i)}
-                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition ${
+                  className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition ${
                     i === activeImg ? 'opacity-100' : 'border-transparent opacity-70 hover:opacity-100'
                   }`}
                   style={i === activeImg ? { borderColor: theme.colors.brand.DEFAULT } : undefined}
                 >
-                  <img src={img.url} alt="" className="h-full w-full object-cover" />
+                  {isVideoUrl(img.url) ? (
+                    <>
+                      <video src={img.url} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <svg className="h-4 w-4 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </>
+                  ) : (
+                    <img src={img.url} alt="" className="h-full w-full object-cover" />
+                  )}
                 </button>
               ))}
             </div>
@@ -223,7 +247,7 @@ export default function ProductDetailPage() {
             {!isOwnAd && (
               <div className="mt-5 space-y-2">
                 <button
-                  onClick={() => startChat.mutate(ad.id)}
+                  onClick={() => { if (requireAuth()) startChat.mutate(ad.id); }}
                   disabled={startChat.isPending}
                   className="btn-accent w-full flex items-center justify-center gap-2"
                 >
@@ -246,7 +270,7 @@ export default function ProductDetailPage() {
                   </a>
                 ) : (
                   <button
-                    onClick={() => revealPhoneMutation.mutate()}
+                    onClick={() => { if (requireAuth()) revealPhoneMutation.mutate(); }}
                     disabled={revealPhoneMutation.isPending}
                     className="w-full rounded-xl border-2 px-5 py-3 text-sm font-semibold transition hover:opacity-90 disabled:opacity-60"
                     style={{ borderColor: theme.colors.brand.DEFAULT, color: theme.colors.brand.DEFAULT }}
@@ -273,10 +297,7 @@ export default function ProductDetailPage() {
                   </Link>
                 ) : (
                   <button
-                    onClick={() => {
-                      if (!isAuthenticated) { navigate('/auth/login'); return; }
-                      addToCart.mutate(ad.id);
-                    }}
+                    onClick={() => { if (requireAuth()) addToCart.mutate(ad.id); }}
                     disabled={addToCart.isPending}
                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 disabled:opacity-60"
                   >
@@ -289,10 +310,7 @@ export default function ProductDetailPage() {
 
                 {/* Save / unsave */}
                 <button
-                  onClick={() => {
-                    if (!isAuthenticated) { navigate('/auth/login'); return; }
-                    toggleWishlist.mutate(ad.id);
-                  }}
+                  onClick={() => { if (requireAuth()) toggleWishlist.mutate(ad.id); }}
                   className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
                 >
                   <svg

@@ -13,6 +13,8 @@ import {
   resetPasswordSchema,
   updateProfileSchema,
   verifyEmailSchema,
+  verifyOtpSchema,
+  resendOtpSchema,
 } from '../validators/index.js';
 
 function parseOrThrow<T extends z.ZodTypeAny>(schema: T, data: unknown): z.infer<T> {
@@ -83,4 +85,16 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
   const dto = parseOrThrow(verifyEmailSchema, req.query);
   await authService.verifyEmail(dto.token);
   return ApiResponse.ok(null, 'Email verified successfully').send(res);
+});
+
+export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
+  const dto = parseOrThrow(verifyOtpSchema, req.body);
+  const result = await authService.verifyOtp(dto);
+  return ApiResponse.ok(result, 'Verified successfully').send(res);
+});
+
+export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
+  const dto = parseOrThrow(resendOtpSchema, req.body);
+  await authService.resendOtp(dto.email);
+  return ApiResponse.ok(null, 'OTP sent if account exists').send(res);
 });

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "robotic-haven-495213-v6",
+  "private_key_id": "230cdb0e1be19e24250085ef5eea6dc53ce84c9e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCd3JtkG40qGBkD\n2TqCCDb06v4rJtWdkTYgVADugK14epHl5LrVfZPThwPS1JkAnuqxt6Az4bq1ASJV\neHzM4XA8VW3ucb5Uyvbd2/Z3rzUFw/jew26r0EZ2uXluF495aJuGI7x4Uh6g8XO5\nXIMgBHq0M9R35DwJ5jsYsb5ydcxmK4GhqMR35BjCoKAEbuMveWjg24NkDf7Tn4Il\nZwh1Bg1P/jMBBwY6sLfffcMXUbVuNMROBReMVIuucUKDpktkOTdRsxZ5PRYnq2Qq\nlfVMn0v+qtxyseY0YaLBQMj1lccFGrHm9XjQJtQhd1kBhFkoXcTI78f5CMDzxUK3\n9VK+Q8czAgMBAAECggEANLGS3ROlR0vL7dDxCr6bOZ3HQbgwzevO2XOw6+vf+7tO\nQCLdiq3kTlNfH1z/xYlGZhQZUbgjjo/WWhlh7zHBOSJ7E4C8O6mURfJKjyDY3hfQ\nVut9YbSgELlQo0MSDUCxyVDcdH1U4/w02Mbcri9Qlh5G6c4xjExhpZiPLb3MgL22\nxOe/7TrdZ19ihIUtVLVvqTHnJ/SQQ7gT3SEiwHQH9ae7BIKVPi3a8vfTFVfMtCsu\nSD0qh8BlUkfyeEvZY6bACwuaZO6fQ1GvXQDXW2VHwOFkwBD/Et33OSNCYeefZqog\nf4ybKant/KNt+WiJ7DvofmXrxSOjs/TFK4LE18K8YQKBgQDN3ULLhJlHRPMffPjd\n0UgufOGfA+TV+yizzfjMS5Y901o2lge1Dmb/oGzm2dZl6ZO6RxO5TM7zVxUtTSDJ\n5E/zeT7ZzJ0q7O5UKxYMJ+MNGquMWeXmeGSjxwfpmcDD+XryghCXWZQzcj2+5KaF\naGvo962y23A7Tpp3JrtK/zkRlQKBgQDETpjANL7r3Xy0ZRtIbG/OysBECDWbtlYL\nXeDrTbprb4mf34iikMBSPUEwt57EoqKaHOchno6p3Qg9F3W2Hn/apN/VsAelXgWJ\n55/gkxqrgnrqyNN/nnB/MtUUqS8yt6FZVItxeALVaJK+PV6bedmOXiwyed0idgZR\nTFL5uH5TpwKBgQCMWgJ1EJUT4u1ClYhyaoGkuB12tUfpn09zrsSmPA5VXmgN+SGO\nDiCovS4iAXhLiQDfqh/HYJdjjgZxGTl2i8L6groX8Ylhv6EJH0rrxLHmuD0m9g9o\nnsI2arZ5TAsBUXDCL2yyUy9YF9YC9I6XO8b+UQZKf5M3y/JBs9VTX0gANQKBgBEO\n/2kcbEbUzWRjsNY/Tgv7RG/lAruQQbPlKYlpDL0PSTdSVm5CA+RhnEueeTZ/J4Aa\n6N7cB2utYGzmn/z+c3/NegH4tQFixTpxnUwHnHaw9Pt4DiD15LK4+Rk9hnNyz5uS\npDdtBVoEJ1ROwuzhzsz3VAHi4xt+hBgGeONoa9nbAoGATiR2dpNfFGrYhP3IHKWh\nlS8iI0z1iFq0dkkFzlk2yzHrUxLmsTI7WNsiV7sB1XSWwjYXpPU6OSoibuHNyxZG\nvSUtWIdFSWpLlEL977/P8VjKjPVqe6bb23INTCjeqg5huIb0VUNTwMzyVWBKwqUK\ngiaE3io8kF080viB/DVykIA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "tution@robotic-haven-495213-v6.iam.gserviceaccount.com",
+  "client_id": "114961248313487540625",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tution%40robotic-haven-495213-v6.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

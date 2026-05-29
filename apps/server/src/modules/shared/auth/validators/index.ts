@@ -38,8 +38,18 @@ export const updateProfileSchema = z.object({
   lat: z.number().optional(),
   lng: z.number().optional(),
   bio: z.string().max(500, 'Bio cannot exceed 500 characters').optional(),
+  avatar: z.string().url().optional(),
 });
 
 export const verifyEmailSchema = z.object({
   token: z.string().min(1, 'Verification token is required'),
+});
+
+export const verifyOtpSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  otp: z.string().length(6, 'OTP must be 6 digits').regex(/^\d{6}$/, 'OTP must be numeric'),
+});
+
+export const resendOtpSchema = z.object({
+  email: z.string().email('Invalid email address'),
 });

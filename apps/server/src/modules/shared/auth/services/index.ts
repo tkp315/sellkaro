@@ -7,9 +7,11 @@ import {
   signTokens,
   verifyRefreshToken,
   generateToken,
+  generateOtp,
   getRefreshTokenExpiry,
   sendVerificationEmail,
   sendPasswordResetEmail,
+  sendOtpEmail,
 } from '../helpers/index.js';
 import { notifyWelcome } from '../../notification/services/index.js';
 import type {
@@ -19,6 +21,8 @@ import type {
   ForgotPasswordDto,
   ResetPasswordDto,
   UpdateProfileDto,
+  VerifyOtpDto,
+  OtpSentResponse,
   AuthResponse,
   SafeUser,
 } from '../types/index.js';
@@ -63,12 +67,13 @@ function toSafeUser(user: {
   };
 }
 
-export async function register(dto: RegisterDto): Promise<AuthResponse> {
+export async function register(dto: RegisterDto): Promise<OtpSentResponse> {
   const existing = await prisma.user.findUnique({ where: { email: dto.email } });
   if (existing) throw ApiError.conflict('Email already in use');
 
   const hashed = await hashPassword(dto.password);
-  const emailToken = generateToken();
+  const otp = generateOtp();
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
   const env = getEnv();
   const adminEmail = String(env['ADMIN_EMAIL'] ?? '');
@@ -76,28 +81,21 @@ export async function register(dto: RegisterDto): Promise<AuthResponse> {
     ? 'ADMIN'
     : (dto.role ?? 'BUYER');
 
-  const user = await prisma.user.create({
+  await prisma.user.create({
     data: {
       email: dto.email,
       password: hashed,
-      phone: dto.phone ?? null,
+      phone: dto.phone?.trim() || null,
       role: autoRole as any,
-      emailVerifyToken: emailToken,
+      otpCode: otp,
+      otpExpiry,
       profile: { create: { name: dto.name } },
     },
-    include: { profile: true },
   });
 
-  await sendVerificationEmail(user.email, emailToken).catch(() => {});
-  void notifyWelcome(user.id, dto.name, user.email);
+  await sendOtpEmail(dto.email, otp).catch(() => {});
 
-  const jwtPayload = { userId: user.id, email: user.email, role: user.role };
-  const tokens = signTokens(jwtPayload);
-  await prisma.refreshToken.create({
-    data: { token: tokens.refreshToken, userId: user.id, expiresAt: getRefreshTokenExpiry() },
-  });
-
-  return { user: toSafeUser(user), tokens };
+  return { requiresOtp: true, email: dto.email };
 }
 
 export async function becomeSeller(userId: string): Promise<AuthResponse> {
@@ -122,16 +120,48 @@ export async function becomeSeller(userId: string): Promise<AuthResponse> {
   return { user: toSafeUser(updated), tokens };
 }
 
-export async function login(dto: LoginDto): Promise<AuthResponse> {
-  const user = await prisma.user.findUnique({
-    where: { email: dto.email },
-    include: { profile: true },
-  });
+export async function login(dto: LoginDto): Promise<OtpSentResponse> {
+  const user = await prisma.user.findUnique({ where: { email: dto.email } });
   if (!user) throw ApiError.unauthorized('Invalid credentials');
   if (user.isBanned) throw ApiError.forbidden('Account has been banned');
 
   const valid = await comparePassword(dto.password, user.password);
   if (!valid) throw ApiError.unauthorized('Invalid credentials');
+
+  const otp = generateOtp();
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { otpCode: otp, otpExpiry },
+  });
+
+  await sendOtpEmail(user.email, otp);
+
+  return { requiresOtp: true, email: user.email };
+}
+
+export async function verifyOtp(dto: VerifyOtpDto): Promise<AuthResponse> {
+  const user = await prisma.user.findUnique({
+    where: { email: dto.email },
+    include: { profile: true },
+  });
+
+  if (!user) throw ApiError.badRequest('Invalid request');
+  if (!user.otpCode || !user.otpExpiry) throw ApiError.badRequest('No OTP pending. Please login again.');
+  if (new Date() > user.otpExpiry) throw ApiError.badRequest('OTP expired. Please login again to get a new one.');
+  if (user.otpCode !== dto.otp) throw ApiError.badRequest('Incorrect OTP. Please try again.');
+
+  const wasFirstVerification = !user.isVerified;
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { otpCode: null, otpExpiry: null, isVerified: true },
+  });
+
+  if (wasFirstVerification) {
+    void notifyWelcome(user.id, user.profile?.name ?? user.email, user.email);
+  }
 
   const jwtPayload = { userId: user.id, email: user.email, role: user.role };
   const tokens = signTokens(jwtPayload);
@@ -139,7 +169,22 @@ export async function login(dto: LoginDto): Promise<AuthResponse> {
     data: { token: tokens.refreshToken, userId: user.id, expiresAt: getRefreshTokenExpiry() },
   });
 
-  return { user: toSafeUser(user), tokens };
+  return { user: toSafeUser({ ...user, isVerified: true }), tokens };
+}
+
+export async function resendOtp(email: string): Promise<void> {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) return; // silent — don't reveal if email exists
+
+  const otp = generateOtp();
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { otpCode: otp, otpExpiry },
+  });
+
+  await sendOtpEmail(email, otp);
 }
 
 export async function logout(refreshToken: string): Promise<void> {

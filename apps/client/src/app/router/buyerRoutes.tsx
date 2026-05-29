@@ -8,11 +8,11 @@ import ChatInboxPage from '@/pages/buyer/ChatInboxPage';
 import ChatConversationPage from '@/pages/buyer/ChatConversationPage';
 
 export const buyerRoutes: RouteObject[] = [
-  { index: true, element: <FeedPage /> },
-  { path: 'product/:id', element: <ProductDetailPage /> },
   {
     element: <ProtectedRoute />,
     children: [
+      { index: true, element: <FeedPage /> },
+      { path: 'product/:id', element: <ProductDetailPage /> },
       { path: 'saved', element: <SavedPage /> },
       { path: 'cart', element: <CartPage /> },
       { path: 'chats', element: <ChatInboxPage /> },

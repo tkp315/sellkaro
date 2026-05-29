@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice, formatRelativeTime } from '@/utils/format';
+import { isVideoUrl } from '@/utils/media';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 import { useToggleWishlist, useWishlistIds } from '@/modules/buyer/wishlist/hooks/useWishlist';
@@ -33,15 +34,37 @@ export default function AdCard({ ad }: Props) {
       to={`/product/${ad.id}`}
       className="group block rounded-2xl border border-gray-100 bg-white overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
     >
-      {/* Image */}
+      {/* Image / Video cover */}
       <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
         {cover ? (
-          <img
-            src={cover}
-            alt={ad.title}
-            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
-          />
+          isVideoUrl(cover) ? (
+            <>
+              <video
+                src={cover}
+                muted
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white">
+                  <svg className="h-5 w-5 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+              <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                VIDEO
+              </span>
+            </>
+          ) : (
+            <img
+              src={cover}
+              alt={ad.title}
+              className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          )
         ) : (
           <div className="h-full w-full flex flex-col items-center justify-center gap-1 text-gray-300">
             <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">

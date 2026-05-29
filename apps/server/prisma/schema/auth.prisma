@@ -9,6 +9,8 @@ model User {
   emailVerifyToken String?
   resetToken       String?
   resetTokenExpiry DateTime?
+  otpCode          String?
+  otpExpiry        DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
