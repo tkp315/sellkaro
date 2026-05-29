@@ -30,16 +30,17 @@ const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [{ path: 'notifications', element: <NotificationsPage /> }],
       },
+      {
+        path: 'seller',
+        element: <ProtectedRoute roles={['SELLER', 'ADMIN']} />,
+        children: sellerRoutes,
+      },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
   {
     path: '/auth',
     children: authRoutes,
-  },
-  {
-    path: '/seller',
-    element: <ProtectedRoute roles={['SELLER', 'ADMIN']} />,
-    children: sellerRoutes,
   },
   {
     path: '/admin',
@@ -55,10 +56,6 @@ const router = createBrowserRouter([
         ],
       },
     ],
-  },
-  {
-    path: '*',
-    element: <NotFoundPage />,
   },
 ]);
 
