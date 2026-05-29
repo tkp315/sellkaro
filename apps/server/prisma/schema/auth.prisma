@@ -23,6 +23,9 @@ model User {
   activityLogs   ActivityLog[]
   notifications  Notification[]
   adminLogs      AdminLog[]     @relation("AdminWhoActed")
+  buyerChats     Chat[]         @relation("BuyerChats")
+  sellerChats    Chat[]         @relation("SellerChats")
+  sentMessages   Message[]      @relation("SentMessages")
 
   @@index([email])
 }

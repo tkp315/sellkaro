@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
+  :root {
+    --brand: #002f34;
+    --brand-light: #004850;
+    --accent: #ffca28;
+    --accent-hover: #f5b800;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  .input-field {
+    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition-all
+           placeholder:text-gray-400
+           focus:border-blue-500 focus:ring-3 focus:ring-blue-500/10
+           disabled:bg-gray-50 disabled:text-gray-400;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#002f34] px-5 py-3 text-sm font-semibold text-white
+           transition hover:bg-[#004850] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#ffca28] px-5 py-3 text-sm font-semibold text-[#002f34]
+           transition hover:bg-[#f5b800] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white border border-gray-100 shadow-sm;
+  }
+}

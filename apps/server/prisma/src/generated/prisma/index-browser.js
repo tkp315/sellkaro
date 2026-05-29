@@ -120,9 +120,287 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.ReportScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  reason: 'reason',
+  status: 'status',
+  adminNote: 'adminNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  reportedById: 'reportedById',
+  reportedUserId: 'reportedUserId',
+  adId: 'adId'
+};
+
+exports.Prisma.AdminLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  note: 'note',
+  createdAt: 'createdAt',
+  adminId: 'adminId'
+};
+
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  phone: 'phone',
+  password: 'password',
+  role: 'role',
+  isVerified: 'isVerified',
+  isBanned: 'isBanned',
+  emailVerifyToken: 'emailVerifyToken',
+  resetToken: 'resetToken',
+  resetTokenExpiry: 'resetTokenExpiry',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProfileScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  avatar: 'avatar',
+  city: 'city',
+  area: 'area',
+  lat: 'lat',
+  lng: 'lng',
+  bio: 'bio',
+  userId: 'userId'
+};
+
+exports.Prisma.RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  userId: 'userId'
+};
+
+exports.Prisma.WishlistScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  adId: 'adId'
+};
+
+exports.Prisma.CartScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.CartItemScalarFieldEnum = {
+  id: 'id',
+  priceAtAdded: 'priceAtAdded',
+  createdAt: 'createdAt',
+  cartId: 'cartId',
+  adId: 'adId'
+};
+
+exports.Prisma.SellerAdScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  price: 'price',
+  condition: 'condition',
+  status: 'status',
+  city: 'city',
+  area: 'area',
+  lat: 'lat',
+  lng: 'lng',
+  viewCount: 'viewCount',
+  isFeatured: 'isFeatured',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  productId: 'productId'
+};
+
+exports.Prisma.AdImageScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  order: 'order',
+  isCover: 'isCover',
+  adId: 'adId'
+};
+
+exports.Prisma.InterestedUserScalarFieldEnum = {
+  id: 'id',
+  message: 'message',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  adId: 'adId'
+};
+
+exports.Prisma.ActivityLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  metadata: 'metadata',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt',
+  userId: 'userId'
+};
+
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  body: 'body',
+  data: 'data',
+  isRead: 'isRead',
+  createdAt: 'createdAt',
+  userId: 'userId'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  icon: 'icon',
+  order: 'order',
+  isActive: 'isActive'
+};
+
+exports.Prisma.SubCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  icon: 'icon',
+  order: 'order',
+  isActive: 'isActive',
+  categoryId: 'categoryId'
+};
+
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  brand: 'brand',
+  model: 'model',
+  specs: 'specs',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  categoryId: 'categoryId',
+  subcategoryId: 'subcategoryId'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.ReportType = exports.$Enums.ReportType = {
+  AD: 'AD',
+  USER: 'USER'
+};
+
+exports.ReportStatus = exports.$Enums.ReportStatus = {
+  PENDING: 'PENDING',
+  REVIEWED: 'REVIEWED',
+  RESOLVED: 'RESOLVED',
+  DISMISSED: 'DISMISSED'
+};
+
+exports.AdminActionType = exports.$Enums.AdminActionType = {
+  BAN_USER: 'BAN_USER',
+  UNBAN_USER: 'UNBAN_USER',
+  REMOVE_AD: 'REMOVE_AD',
+  APPROVE_AD: 'APPROVE_AD',
+  FEATURE_AD: 'FEATURE_AD',
+  UNFEATURE_AD: 'UNFEATURE_AD',
+  WARN_USER: 'WARN_USER',
+  RESOLVE_REPORT: 'RESOLVE_REPORT',
+  DISMISS_REPORT: 'DISMISS_REPORT'
+};
+
+exports.Role = exports.$Enums.Role = {
+  BUYER: 'BUYER',
+  SELLER: 'SELLER',
+  ADMIN: 'ADMIN',
+  MODERATOR: 'MODERATOR'
+};
+
+exports.Condition = exports.$Enums.Condition = {
+  NEW: 'NEW',
+  LIKE_NEW: 'LIKE_NEW',
+  GOOD: 'GOOD',
+  FAIR: 'FAIR'
+};
+
+exports.AdStatus = exports.$Enums.AdStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  SOLD: 'SOLD',
+  EXPIRED: 'EXPIRED',
+  REMOVED: 'REMOVED'
+};
+
+exports.ActivityType = exports.$Enums.ActivityType = {
+  VIEW_AD: 'VIEW_AD',
+  SEARCH: 'SEARCH',
+  LOGIN: 'LOGIN',
+  LOGOUT: 'LOGOUT',
+  POST_AD: 'POST_AD',
+  EDIT_AD: 'EDIT_AD',
+  DELETE_AD: 'DELETE_AD',
+  MARK_SOLD: 'MARK_SOLD',
+  SHOW_INTEREST: 'SHOW_INTEREST'
+};
+
+exports.NotificationType = exports.$Enums.NotificationType = {
+  WELCOME: 'WELCOME',
+  NEW_MESSAGE: 'NEW_MESSAGE',
+  INTEREST_SHOWN: 'INTEREST_SHOWN',
+  AD_SOLD: 'AD_SOLD',
+  AD_EXPIRED: 'AD_EXPIRED',
+  AD_REMOVED_BY_ADMIN: 'AD_REMOVED_BY_ADMIN',
+  REPORT_RESOLVED: 'REPORT_RESOLVED',
+  ACCOUNT_WARNED: 'ACCOUNT_WARNED',
+  ACCOUNT_BANNED: 'ACCOUNT_BANNED'
+};
 
 exports.Prisma.ModelName = {
-
+  Report: 'Report',
+  AdminLog: 'AdminLog',
+  User: 'User',
+  Profile: 'Profile',
+  RefreshToken: 'RefreshToken',
+  Wishlist: 'Wishlist',
+  Cart: 'Cart',
+  CartItem: 'CartItem',
+  SellerAd: 'SellerAd',
+  AdImage: 'AdImage',
+  InterestedUser: 'InterestedUser',
+  ActivityLog: 'ActivityLog',
+  Notification: 'Notification',
+  Category: 'Category',
+  SubCategory: 'SubCategory',
+  Product: 'Product'
 };
 
 /**

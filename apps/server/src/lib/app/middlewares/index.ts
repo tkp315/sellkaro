@@ -17,9 +17,10 @@ async function init(config: Record<string, any>, appObj: Application) {
 
   for (const dir of dirs) {
     const module = await import(`./${dir}/index.js`);
-    if (module.init) {
+    const initFn = module.init ?? module.default;
+    if (typeof initFn === 'function') {
       const middlewareConfig = config[dir];
-      module.init(middlewareConfig, appObj);
+      initFn(middlewareConfig, appObj);
       console.log(`  ✅ middleware/${dir} applied`);
     }
   }
