@@ -8,6 +8,7 @@ import chatRouter from '@modules/buyer/chat/routes/index.js';
 import sellerAdsRouter from '@modules/seller/ads/routes/index.js';
 import adminRouter from '@modules/admin/routes/index.js';
 import notificationRouter from '@modules/shared/notification/routes/index.js';
+import uploadRouter from '@modules/shared/upload/routes/index.js';
 import { getSellerPublicProfile } from '@modules/seller/ads/controllers/index.js';
 
 const router = Router();
@@ -22,5 +23,6 @@ router.use('/seller/ads', sellerAdsRouter);
 router.get('/users/:userId/profile', getSellerPublicProfile);
 router.use('/admin', adminRouter);
 router.use('/notifications', notificationRouter);
+router.use('/upload', uploadRouter);
 
 export default router;

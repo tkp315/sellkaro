@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { QUERY_KEYS } from '@/utils/constants';
 import { authApi } from '../services/authApi';
@@ -18,27 +18,44 @@ export function useCurrentUser() {
 }
 
 export function useLogin() {
-  const { login } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
   return useMutation({
     mutationFn: (dto: LoginDto) => authApi.login(dto),
     onSuccess: (data) => {
-      login(data.user, data.tokens);
-      navigate(data.user.role === 'SELLER' ? '/seller' : '/');
+      navigate('/auth/verify-otp', {
+        state: { email: data.email, from: (location.state as { from?: unknown } | null)?.from },
+      });
     },
   });
 }
 
 export function useRegister() {
-  const { login } = useAuthStore();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: (dto: RegisterDto) => authApi.register(dto),
     onSuccess: (data) => {
-      login(data.user, data.tokens);
-      navigate(data.user.role === 'SELLER' ? '/seller' : '/');
+      navigate('/auth/verify-otp', { state: { email: data.email } });
     },
   });
+}
+
+export function useVerifyOtp() {
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  return useMutation({
+    mutationFn: (dto: { email: string; otp: string }) => authApi.verifyOtp(dto),
+    onSuccess: (data) => {
+      login(data.user, data.tokens);
+      const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname;
+      navigate(from ?? (data.user.role === 'SELLER' ? '/seller' : '/'));
+    },
+  });
+}
+
+export function useResendOtp() {
+  return useMutation({ mutationFn: (email: string) => authApi.resendOtp(email) });
 }
 
 export function useBecomeSeller() {
@@ -79,6 +96,10 @@ export function useLogout() {
 
 export function useForgotPassword() {
   return useMutation({ mutationFn: authApi.forgotPassword });
+}
+
+export function useResetPassword() {
+  return useMutation({ mutationFn: authApi.resetPassword });
 }
 
 export function useUpdateProfile() {
