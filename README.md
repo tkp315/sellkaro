@@ -157,3 +157,9 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.dev/docs/reference/configuration)
 - [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+
+## Deployment
+
+- **Frontend:** Vercel (auto-deploy on push to `main`)
+- **Backend:** AWS EC2 via GitHub Actions (`.github/workflows/deploy.yml`)
+- **API:** https://api.awaaz.life
