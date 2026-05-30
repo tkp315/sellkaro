@@ -22,6 +22,8 @@ model User {
   interests      InterestedUser[]
   reportsMade    Report[]       @relation("ReportedBy")
   reportsAgainst Report[]       @relation("ReportedUser")
+  reviewsGiven   Review[]       @relation("ReviewsGiven")
+  reviewsReceived Review[]      @relation("ReviewsReceived")
   activityLogs   ActivityLog[]
   notifications  Notification[]
   adminLogs      AdminLog[]     @relation("AdminWhoActed")

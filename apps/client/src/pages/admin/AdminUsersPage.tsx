@@ -66,6 +66,7 @@ export default function AdminUsersPage() {
             <tr className="border-b border-gray-100 bg-gray-50">
               <th className="px-4 py-3 text-left font-semibold text-gray-600">User</th>
               <th className="px-4 py-3 text-left font-semibold text-gray-600">Role</th>
+              <th className="hidden lg:table-cell px-4 py-3 text-left font-semibold text-gray-600">Phone</th>
               <th className="hidden md:table-cell px-4 py-3 text-left font-semibold text-gray-600">Ads</th>
               <th className="hidden md:table-cell px-4 py-3 text-left font-semibold text-gray-600">Joined</th>
               <th className="px-4 py-3 text-left font-semibold text-gray-600">Status</th>
@@ -76,7 +77,7 @@ export default function AdminUsersPage() {
             {isLoading ? (
               Array.from({ length: 8 }).map((_, i) => (
                 <tr key={i}>
-                  {[1, 2, 3, 4, 5, 6].map((j) => (
+                  {[1, 2, 3, 4, 5, 6, 7].map((j) => (
                     <td key={j} className="px-4 py-3"><div className="h-4 animate-pulse rounded bg-gray-100" /></td>
                   ))}
                 </tr>
@@ -103,6 +104,15 @@ export default function AdminUsersPage() {
                   >
                     {ROLES.filter(Boolean).map((r) => <option key={r} value={r}>{r}</option>)}
                   </select>
+                </td>
+                <td className="hidden lg:table-cell px-4 py-3">
+                  {u.phone ? (
+                    <a href={`tel:${u.phone}`} className="text-sm text-gray-700 hover:underline">
+                      {u.phone}
+                    </a>
+                  ) : (
+                    <span className="text-xs text-gray-300">—</span>
+                  )}
                 </td>
                 <td className="hidden md:table-cell px-4 py-3 text-gray-600">{u._count?.ads ?? 0}</td>
                 <td className="hidden md:table-cell px-4 py-3 text-gray-400 text-xs">{formatRelativeTime(u.createdAt)}</td>

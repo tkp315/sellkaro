@@ -24,6 +24,36 @@ export async function getReports({ page = 1, limit = 20, status = '' }: { page?:
   return { reports, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
 }
 
+export async function createReport(adminId: string, dto: {
+  type: 'AD' | 'USER';
+  reason: string;
+  adId?: string;
+  reportedUserId?: string;
+}) {
+  if (dto.type === 'AD' && !dto.adId) throw ApiError.badRequest('Ad ID required for AD report');
+  if (dto.type === 'USER' && !dto.reportedUserId) throw ApiError.badRequest('User ID required for USER report');
+
+  if (dto.adId) {
+    const ad = await prisma.sellerAd.findUnique({ where: { id: dto.adId } });
+    if (!ad) throw ApiError.notFound('Ad not found');
+  }
+  if (dto.reportedUserId) {
+    const user = await prisma.user.findUnique({ where: { id: dto.reportedUserId } });
+    if (!user) throw ApiError.notFound('User not found');
+  }
+
+  return prisma.report.create({
+    data: {
+      type: dto.type,
+      reason: dto.reason,
+      reportedById: adminId,
+      adId: dto.adId ?? null,
+      reportedUserId: dto.reportedUserId ?? null,
+      status: 'PENDING',
+    },
+  });
+}
+
 export async function resolveReport(adminId: string, reportId: string, adminNote?: string) {
   const report = await prisma.report.findUnique({ where: { id: reportId } });
   if (!report) throw ApiError.notFound('Report not found');

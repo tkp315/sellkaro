@@ -29,6 +29,7 @@ interface MediaItem {
   isVideo: boolean;
   status: 'uploading' | 'done' | 'error';
   url?: string;
+  awsUrl?: string;
   error?: string;
 }
 
@@ -141,7 +142,7 @@ export default function AdForm({ mode, ad }: Props) {
         prev.map((item) => {
           const idx = newItems.findIndex((n) => n.id === item.id);
           if (idx === -1) return item;
-          return { ...item, status: 'done' as const, url: results[idx]!.url };
+          return { ...item, status: 'done' as const, url: results[idx]!.url, awsUrl: results[idx]!.awsUrl };
         }),
       );
     } catch {
@@ -170,13 +171,15 @@ export default function AdForm({ mode, ad }: Props) {
       return;
     }
 
-    const imageUrls = mediaItems.filter((m) => m.status === 'done' && m.url).map((m) => m.url!);
+    const doneItems = mediaItems.filter((m) => m.status === 'done' && m.url);
+    const imageUrls = doneItems.map((m) => m.url!);
+    const imageAwsUrls = doneItems.map((m) => m.awsUrl ?? null);
 
     if (mode === 'edit') {
-      await updateAd.mutateAsync({ ...data, imageUrls: imageUrls.length ? imageUrls : undefined });
+      await updateAd.mutateAsync({ ...data, imageUrls: imageUrls.length ? imageUrls : undefined, imageAwsUrls: imageAwsUrls.length ? imageAwsUrls : undefined });
       showToast('Ad updated!', 'success');
     } else {
-      await createAd.mutateAsync({ ...data, imageUrls: imageUrls.length ? imageUrls : undefined });
+      await createAd.mutateAsync({ ...data, imageUrls: imageUrls.length ? imageUrls : undefined, imageAwsUrls: imageAwsUrls.length ? imageAwsUrls : undefined });
       showToast('Ad posted!', 'success');
     }
     navigate('/seller');

@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import type { Request, Response } from 'express';
 import asyncHandler from '@utils/asyncHandler.js';
 import ApiResponse from '@utils/apiResponse.js';
@@ -12,13 +13,13 @@ export const getCart = asyncHandler(async (req: Request, res: Response) => {
 
 export const addToCart = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
-  const result = await cartService.addToCart(req.user.userId, req.params['adId']!);
+  const result = await cartService.addToCart(req.user.userId, p(req, 'adId'));
   return ApiResponse.ok(result).send(res);
 });
 
 export const removeFromCart = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
-  const result = await cartService.removeFromCart(req.user.userId, req.params['adId']!);
+  const result = await cartService.removeFromCart(req.user.userId, p(req, 'adId'));
   return ApiResponse.ok(result).send(res);
 });
 

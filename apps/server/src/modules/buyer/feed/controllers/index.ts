@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import asyncHandler from '@utils/asyncHandler.js';
@@ -25,11 +26,17 @@ export const getFeed = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getAdDetail = asyncHandler(async (req: Request, res: Response) => {
-  const ad = await feedService.getAdDetail(req.params['id']!);
+  const ad = await feedService.getAdDetail(p(req, 'id'));
   return ApiResponse.ok(ad).send(res);
 });
 
 export const revealPhone = asyncHandler(async (req: Request, res: Response) => {
-  const result = await feedService.revealPhone(req.params['id']!, req.user!.userId);
+  const result = await feedService.revealPhone(p(req, 'id'), req.user!.userId);
   return ApiResponse.ok(result).send(res);
+});
+
+export const reportAd = asyncHandler(async (req: Request, res: Response) => {
+  const { reason } = z.object({ reason: z.string().min(5, 'Please provide a reason') }).parse(req.body);
+  await feedService.reportAd(p(req, 'id'), req.user!.userId, reason);
+  return ApiResponse.ok(null, 'Report submitted. Our team will review it.').send(res);
 });

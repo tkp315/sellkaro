@@ -1,6 +1,8 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSellerPublicProfile } from '@/modules/seller/ads/services/sellerAdsApi';
+import { useSellerReviews } from '@/modules/shared/review/hooks/useReviews';
+import StarRating from '@/components/ui/StarRating';
 import { useTheme } from '@/hooks/useTheme';
 import { formatPrice, formatRelativeTime } from '@/utils/format';
 import type { ConditionKey } from '@/lib/colors';
@@ -54,6 +56,7 @@ export default function SellerPublicProfilePage() {
 
   const { seller, ads } = data;
   const sellerName = seller.profile?.name ?? 'Seller';
+  const { data: reviewsData } = useSellerReviews(userId!);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -96,6 +99,13 @@ export default function SellerPublicProfilePage() {
               >
                 {seller.activeAdsCount} active listing{seller.activeAdsCount !== 1 ? 's' : ''}
               </span>
+              {reviewsData && reviewsData.total > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <StarRating value={Math.round(reviewsData.avg)} size="sm" />
+                  <span className="text-sm font-semibold text-gray-700">{reviewsData.avg}</span>
+                  <span className="text-gray-400">({reviewsData.total} review{reviewsData.total !== 1 ? 's' : ''})</span>
+                </span>
+              )}
             </div>
 
             {seller.profile?.bio && (
@@ -153,6 +163,76 @@ export default function SellerPublicProfilePage() {
               </Link>
             );
           })}
+        </div>
+      )}
+
+      {/* Reviews Section */}
+      {reviewsData && (
+        <div className="mt-10">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-gray-900">Reviews</h2>
+            <span className="text-sm text-gray-500">{reviewsData.total} review{reviewsData.total !== 1 ? 's' : ''}</span>
+          </div>
+
+          {reviewsData.total === 0 ? (
+            <div className="card py-10 text-center">
+              <p className="text-3xl mb-2">⭐</p>
+              <p className="text-gray-500 text-sm">No reviews yet.</p>
+            </div>
+          ) : (
+            <>
+              {/* Rating summary */}
+              <div className="card p-5 mb-4 flex items-center gap-8">
+                <div className="text-center">
+                  <p className="text-5xl font-black text-gray-900">{reviewsData.avg}</p>
+                  <StarRating value={Math.round(reviewsData.avg)} size="md" />
+                  <p className="text-xs text-gray-400 mt-1">{reviewsData.total} reviews</p>
+                </div>
+                <div className="flex-1 space-y-1.5">
+                  {reviewsData.breakdown.map(({ star, count }) => (
+                    <div key={star} className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500 w-4">{star}</span>
+                      <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-amber-400 transition-all"
+                          style={{ width: reviewsData.total > 0 ? `${(count / reviewsData.total) * 100}%` : '0%' }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-400 w-4">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Individual reviews */}
+              <div className="space-y-3">
+                {reviewsData.reviews.map((review) => (
+                  <div key={review.id} className="card p-4">
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="h-9 w-9 shrink-0 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                        style={{ backgroundColor: theme.colors.brand.DEFAULT }}
+                      >
+                        {(review.reviewer.profile?.name ?? 'U')[0]!.toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-medium text-gray-900 text-sm">
+                            {review.reviewer.profile?.name ?? 'User'}
+                          </p>
+                          <p className="text-xs text-gray-400 shrink-0">{formatRelativeTime(review.createdAt)}</p>
+                        </div>
+                        <StarRating value={review.rating} size="sm" />
+                        {review.comment && (
+                          <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">{review.comment}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

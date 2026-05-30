@@ -11,6 +11,7 @@ export interface CreateAdDto {
   categoryId: string;
   subcategoryId?: string;
   imageUrls?: string[];
+  imageAwsUrls?: (string | null)[];
 }
 
 export interface UpdateAdDto {
@@ -21,6 +22,7 @@ export interface UpdateAdDto {
   city?: string;
   area?: string;
   imageUrls?: string[];
+  imageAwsUrls?: (string | null)[];
 }
 
 export interface SellerAd {

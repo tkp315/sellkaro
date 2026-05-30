@@ -22,7 +22,10 @@
       "Bash(xargs grep -l \"rateLimit\\\\|rate-limit\")",
       "Bash(npm test *)",
       "Bash(Get-Content \"C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--freelance-olx\\\\e2dd6972-e998-4124-bc5d-ffc686215492\\\\tasks\\\\bco8031mk.output\" -Wait)",
-      "Bash(Select-String -Pattern \".\")"
+      "Bash(Select-String -Pattern \".\")",
+      "PowerShell(git check-ignore *)",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(cd D:\\\\freelance\\\\olx; git ls-files apps/server/prisma/migrations/ 2>&1 | Select-Object -First 4; Write-Host \"---count---\"; \\(git ls-files apps/server/prisma/migrations/ | Measure-Object\\).Count)"
     ]
   }
 }

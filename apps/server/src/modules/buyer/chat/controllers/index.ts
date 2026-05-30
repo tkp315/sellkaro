@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import asyncHandler from '@utils/asyncHandler.js';
@@ -7,20 +8,33 @@ import * as chatService from '../services/index.js';
 
 export const getOrCreateChat = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
-  const chat = await chatService.getOrCreateChat(req.user.userId, req.params['adId']!);
+  const chat = await chatService.getOrCreateChat(req.user.userId, p(req, 'adId'));
   return ApiResponse.ok(chat).send(res);
 });
 
 export const getChat = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
-  const chat = await chatService.getChat(req.params['chatId']!, req.user.userId);
+  const chat = await chatService.getChat(p(req, 'chatId'), req.user.userId);
   return ApiResponse.ok(chat).send(res);
 });
 
 export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
-  const { content } = z.object({ content: z.string().min(1).max(1000) }).parse(req.body);
-  const message = await chatService.sendMessage(req.params['chatId']!, req.user.userId, content);
+  const { content, mediaUrl, mediaType, awsUrl } = z.object({
+    content: z.string().max(1000).default(''),
+    mediaUrl: z.string().url().optional(),
+    mediaType: z.enum(['image', 'video']).optional(),
+    awsUrl: z.string().url().optional(),
+  }).parse(req.body);
+
+  if (!content && !mediaUrl) throw ApiError.badRequest('Message content or media required');
+
+  const message = await chatService.sendMessage(
+    p(req, 'chatId'),
+    req.user.userId,
+    content,
+    mediaUrl ? { mediaUrl, mediaType, awsUrl } : undefined,
+  );
   return ApiResponse.created(message).send(res);
 });
 

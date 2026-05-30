@@ -23,6 +23,8 @@ export const adminApi = {
 
   getReports: (params?: Record<string, unknown>) =>
     api.get(`${BASE}/reports`, { params }).then((r) => r.data.data),
+  createReport: (dto: { type: 'AD' | 'USER'; reason: string; adId?: string; reportedUserId?: string }) =>
+    api.post(`${BASE}/reports`, dto).then((r) => r.data.data),
   resolveReport: (reportId: string, adminNote?: string) =>
     api.patch(`${BASE}/reports/${reportId}/resolve`, { adminNote }).then((r) => r.data.data),
   dismissReport: (reportId: string, adminNote?: string) =>

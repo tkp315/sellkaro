@@ -41,8 +41,15 @@ export default function FeedPage() {
     setCityInput(urlCity ?? '');
   }, [urlCity]);
 
+  // Filter change → reset to page 1
   const set = <K extends keyof FeedFilters>(key: K, value: FeedFilters[K]) =>
     setFilters((p) => ({ ...p, [key]: value || undefined, page: 1 }));
+
+  // Page change → keep all filters, only update page + scroll top
+  const goToPage = (page: number) => {
+    setFilters((p) => ({ ...p, page }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const activeCondition = (filters.condition as ConditionKey | undefined) ?? '';
 
@@ -336,8 +343,8 @@ export default function FeedPage() {
             {data.pagination.totalPages > 1 && (
               <div className="mt-10 flex items-center justify-center gap-3">
                 <button
-                  disabled={!filters.page || filters.page <= 1}
-                  onClick={() => set('page', (filters.page ?? 1) - 1)}
+                  disabled={(filters.page ?? 1) <= 1}
+                  onClick={() => goToPage((filters.page ?? 1) - 1)}
                   className="rounded-xl border border-gray-200 bg-white px-5 py-2 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 transition"
                 >
                   ← Previous
@@ -348,7 +355,7 @@ export default function FeedPage() {
                 </span>
                 <button
                   disabled={!data.pagination.hasNext}
-                  onClick={() => set('page', (filters.page ?? 1) + 1)}
+                  onClick={() => goToPage((filters.page ?? 1) + 1)}
                   className="rounded-xl border border-gray-200 bg-white px-5 py-2 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 transition"
                 >
                   Next →

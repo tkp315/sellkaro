@@ -88,7 +88,7 @@ export function Navbar() {
             className="text-2xl font-black tracking-tighter"
             style={{ color: theme.colors.accent.DEFAULT }}
           >
-            OLX
+            Sell Karo
           </span>
         </Link>
 

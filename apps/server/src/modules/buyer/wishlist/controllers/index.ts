@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import type { Request, Response } from 'express';
 import asyncHandler from '@utils/asyncHandler.js';
 import ApiResponse from '@utils/apiResponse.js';
@@ -6,7 +7,7 @@ import * as wishlistService from '../services/index.js';
 
 export const toggleWishlist = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
-  const result = await wishlistService.toggleWishlist(req.user.userId, req.params['adId']!);
+  const result = await wishlistService.toggleWishlist(req.user.userId, p(req, 'adId'));
   return ApiResponse.ok(result).send(res);
 });
 
