@@ -19,8 +19,21 @@ export const getChat = asyncHandler(async (req: Request, res: Response) => {
 
 export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
-  const { content } = z.object({ content: z.string().min(1).max(1000) }).parse(req.body);
-  const message = await chatService.sendMessage(req.params['chatId']!, req.user.userId, content);
+  const { content, mediaUrl, mediaType, awsUrl } = z.object({
+    content: z.string().max(1000).default(''),
+    mediaUrl: z.string().url().optional(),
+    mediaType: z.enum(['image', 'video']).optional(),
+    awsUrl: z.string().url().optional(),
+  }).parse(req.body);
+
+  if (!content && !mediaUrl) throw ApiError.badRequest('Message content or media required');
+
+  const message = await chatService.sendMessage(
+    req.params['chatId']!,
+    req.user.userId,
+    content,
+    mediaUrl ? { mediaUrl, mediaType, awsUrl } : undefined,
+  );
   return ApiResponse.created(message).send(res);
 });
 

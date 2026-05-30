@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Setup Guide — Client</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .page { max-width: 820px; margin: 0 auto; padding: 48px 40px; }
+
+    .header {
+      background: #002f34;
+      color: white;
+      padding: 36px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+    .header p { color: rgba(255,255,255,0.7); margin-top: 6px; font-size: 14px; }
+    .header .badge {
+      display: inline-block;
+      background: #ffca28;
+      color: #002f34;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .summary {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+    .summary h2 { color: #166534; font-size: 15px; margin-bottom: 12px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .summary-item { text-align: center; }
+    .summary-item .amount { font-size: 20px; font-weight: 800; color: #166534; }
+    .summary-item .label { font-size: 11px; color: #4b7563; margin-top: 2px; }
+
+    .section { margin-bottom: 32px; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      color: #002f34;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .section-num {
+      background: #002f34;
+      color: #ffca28;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .service-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .service-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .service-name { font-weight: 700; font-size: 15px; color: #111; }
+    .service-url { font-size: 12px; color: #6b7280; margin-top: 2px; }
+    .badge-free {
+      background: #dcfce7;
+      color: #166534;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .badge-paid {
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .service-body { padding: 16px 18px; }
+
+    .steps { list-style: none; }
+    .steps li {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      align-items: flex-start;
+    }
+    .step-num {
+      background: #002f34;
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-text { color: #374151; font-size: 13.5px; }
+    .step-text strong { color: #111; }
+    .step-text code {
+      background: #f3f4f6;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #002f34;
+    }
+
+    .share-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 12px;
+    }
+    .share-box p { font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 6px; }
+    .share-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      color: #78350f;
+      margin-bottom: 3px;
+    }
+    .share-item::before { content: "→"; font-weight: 700; color: #d97706; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th {
+      background: #002f34;
+      color: white;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    td { padding: 10px 14px; border-bottom: 1px solid #e5e7eb; font-size: 13px; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #f9fafb; }
+    .cost-free { color: #166534; font-weight: 700; }
+    .cost-paid { color: #92400e; font-weight: 700; }
+
+    .note {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 16px;
+      font-size: 13px;
+      color: #1e40af;
+      line-height: 1.7;
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    @media print {
+      body { font-size: 13px; }
+      .page { padding: 20px; }
+      .service-card { break-inside: avoid; }
+      .section { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">CLIENT SETUP GUIDE</div>
+    <h1>Services aur Accounts Setup</h1>
+    <p>Ye document developer ne prepare kiya hai. Neeche di gayi services aapko khud create/purchase karni hain aur credentials developer ko share karne hain.</p>
+  </div>
+
+  <!-- Cost Summary -->
+  <div class="summary">
+    <h2>💰 Pehle Saal Ka Total Cost</h2>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="amount">₹800–1,500</div>
+        <div class="label">Domain (yearly)</div>
+      </div>
+      <div class="summary-item">
+        <div class="amount">₹0</div>
+        <div class="label">AWS Free Tier (12 months)</div>
+      </div>
+      <div class="summary-item">
+        <div class="amount">₹0</div>
+        <div class="label">Baaki Sab Services</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: Domain -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">1</div>
+      Domain Name (Zaruri)
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div>
+          <div class="service-name">🌐 Domain Name</div>
+          <div class="service-url">godaddy.com &nbsp;|&nbsp; namecheap.com</div>
+        </div>
+        <span class="badge-paid">₹800–1,500/year</span>
+      </div>
+      <div class="service-body">
+        <ul class="steps">
+          <li><div class="step-num">1</div><div class="step-text"><strong>godaddy.com</strong> ya <strong>namecheap.com</strong> par jaayein</div></li>
+          <li><div class="step-num">2</div><div class="step-text">Search box mein apna pasand ka naam type karein — jaise <code>sellkaro.in</code> ya <code>apnamarket.com</code></div></li>
+          <li><div class="step-num">3</div><div class="step-text">Domain select karein aur cart mein add karein — <strong>.in</strong> (~₹500/yr) ya <strong>.com</strong> (~₹1,000/yr)</div></li>
+          <li><div class="step-num">4</div><div class="step-text">Account banayein, payment karein — domain aapka ho jaayega</div></li>
+          <li><div class="step-num">5</div><div class="step-text">Auto-renew ON rakhein taaki domain expire na ho</div></li>
+        </ul>
+        <div class="share-box">
+          <p>📤 Developer ko ye share karein:</p>
+          <div class="share-item">Domain name (e.g. sellkaro.com)</div>
+          <div class="share-item">Domain provider ka login access (ya DNS management access)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: AWS -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">2</div>
+      AWS Account — Server + Storage (Zaruri)
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div>
+          <div class="service-name">☁️ Amazon Web Services (AWS)</div>
+          <div class="service-url">aws.amazon.com</div>
+        </div>
+        <span class="badge-free">Free Tier — 12 Months</span>
+      </div>
+      <div class="service-body">
+        <ul class="steps">
+          <li><div class="step-num">1</div><div class="step-text"><strong>aws.amazon.com</strong> par jaayein → <strong>"Create an AWS Account"</strong> click karein</div></li>
+          <li><div class="step-num">2</div><div class="step-text">Email address, password aur account name fill karein</div></li>
+          <li><div class="step-num">3</div><div class="step-text">Credit/Debit card add karein — free tier mein <strong>charge nahi hoga</strong>. Sirf verification ke liye ₹2 temporary hold hoga jo 3-5 din mein wapas aa jaata hai</div></li>
+          <li><div class="step-num">4</div><div class="step-text">Phone number se OTP verify karein</div></li>
+          <li><div class="step-num">5</div><div class="step-text">Support plan mein <strong>"Basic support — Free"</strong> select karein</div></li>
+          <li><div class="step-num">6</div><div class="step-text">AWS Console mein login karein — account ready!</div></li>
+        </ul>
+        <div class="note">
+          ℹ️ <strong>Free Tier mein kya milta hai (12 mahine):</strong><br/>
+          • EC2 t2.micro — App Server (750 hrs/month = poora mahina free)<br/>
+          • S3 — File Storage 5GB free<br/>
+          • CloudFront — Website CDN 50GB/month free<br/>
+          • SES — 62,000 emails/month free (EC2 se)
+        </div>
+        <div class="share-box">
+          <p>📤 Developer ko ye share karein:</p>
+          <div class="share-item">AWS account ka root email aur password (temporarily)</div>
+          <div class="share-item">Ya developer IAM user khud bana lenge aur aapko credentials denge</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Supabase -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">3</div>
+      Database — Supabase (Zaruri)
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div>
+          <div class="service-name">🗄️ Supabase</div>
+          <div class="service-url">supabase.com</div>
+        </div>
+        <span class="badge-free">Free Forever</span>
+      </div>
+      <div class="service-body">
+        <ul class="steps">
+          <li><div class="step-num">1</div><div class="step-text"><strong>supabase.com</strong> par jaayein → <strong>"Start your project"</strong> click karein</div></li>
+          <li><div class="step-num">2</div><div class="step-text">GitHub account se ya email se sign up karein</div></li>
+          <li><div class="step-num">3</div><div class="step-text">Dashboard mein <strong>"New Project"</strong> click karein</div></li>
+          <li><div class="step-num">4</div><div class="step-text">Project name dein, ek <strong>strong database password</strong> set karein (ise save kar lein!), Region: <strong>Southeast Asia (Singapore)</strong> ya <strong>South Asia</strong> select karein</div></li>
+          <li><div class="step-num">5</div><div class="step-text"><strong>"Create new project"</strong> — 2 minute mein project ready ho jaayega</div></li>
+          <li><div class="step-num">6</div><div class="step-text">Project → <strong>Settings</strong> → <strong>Database</strong> → <strong>Connection string</strong> → URI tab → copy karein</div></li>
+        </ul>
+        <div class="share-box">
+          <p>📤 Developer ko ye share karein:</p>
+          <div class="share-item">Database Connection String (URI — postgres://... se shuru hoti hai)</div>
+          <div class="share-item">Database Password (jo aapne set kiya tha)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Resend -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">4</div>
+      Email Service — Resend (Zaruri)
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div>
+          <div class="service-name">📧 Resend</div>
+          <div class="service-url">resend.com</div>
+        </div>
+        <span class="badge-free">Free — 3,000 emails/month</span>
+      </div>
+      <div class="service-body">
+        <ul class="steps">
+          <li><div class="step-num">1</div><div class="step-text"><strong>resend.com</strong> par jaayein → <strong>"Get Started"</strong> click karein</div></li>
+          <li><div class="step-num">2</div><div class="step-text">Email se sign up karein aur email verify karein</div></li>
+          <li><div class="step-num">3</div><div class="step-text">Dashboard → <strong>Domains</strong> → <strong>"Add Domain"</strong> → apna domain daalein (e.g. <code>sellkaro.com</code>)</div></li>
+          <li><div class="step-num">4</div><div class="step-text">Resend kuch DNS records dikhayega — screenshot le lein aur developer ko send karein. Developer ye records aapke domain mein add kar denge</div></li>
+          <li><div class="step-num">5</div><div class="step-text">Domain verify hone ke baad → <strong>API Keys</strong> → <strong>"Create API Key"</strong> → naam dein → <strong>Copy</strong> karein</div></li>
+        </ul>
+        <div class="share-box">
+          <p>📤 Developer ko ye share karein:</p>
+          <div class="share-item">Resend API Key (<code>re_</code> se shuru hoti hai)</div>
+          <div class="share-item">Email FROM address — e.g. <code>noreply@sellkaro.com</code></div>
+          <div class="share-item">DNS records ka screenshot (domain verification ke liye)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Google OAuth -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">5</div>
+      Google Login — Google OAuth (Optional)
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div>
+          <div class="service-name">🔐 Google Cloud Console</div>
+          <div class="service-url">console.cloud.google.com</div>
+        </div>
+        <span class="badge-free">Bilkul Free</span>
+      </div>
+      <div class="service-body">
+        <ul class="steps">
+          <li><div class="step-num">1</div><div class="step-text"><strong>console.cloud.google.com</strong> par jaayein (apne Gmail account se login karein)</div></li>
+          <li><div class="step-num">2</div><div class="step-text">Top par <strong>"New Project"</strong> click karein → Project naam dein → <strong>Create</strong></div></li>
+          <li><div class="step-num">3</div><div class="step-text">Left menu → <strong>APIs & Services</strong> → <strong>OAuth consent screen</strong> → <strong>External</strong> select karein → App name, support email fill karein → Save</div></li>
+          <li><div class="step-num">4</div><div class="step-text"><strong>Credentials</strong> → <strong>"+ Create Credentials"</strong> → <strong>OAuth Client ID</strong> → Application type: <strong>Web application</strong></div></li>
+          <li><div class="step-num">5</div><div class="step-text">Create karne ke baad <strong>Client ID</strong> copy karein</div></li>
+        </ul>
+        <div class="share-box">
+          <p>📤 Developer ko ye share karein:</p>
+          <div class="share-item">Google OAuth Client ID (numbers aur letters ka lamba string)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cost Table -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">6</div>
+      Pura Cost Summary
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Kaam</th>
+          <th>Cost</th>
+          <th>Zaruri?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Domain Name</strong></td>
+          <td>Website address (sellkaro.com)</td>
+          <td class="cost-paid">₹800–1,500/year</td>
+          <td>✅ Haan</td>
+        </tr>
+        <tr>
+          <td><strong>AWS</strong></td>
+          <td>Server + File Storage + CDN</td>
+          <td class="cost-free">Free (12 months)</td>
+          <td>✅ Haan</td>
+        </tr>
+        <tr>
+          <td><strong>Supabase</strong></td>
+          <td>Database</td>
+          <td class="cost-free">Free forever</td>
+          <td>✅ Haan</td>
+        </tr>
+        <tr>
+          <td><strong>Resend</strong></td>
+          <td>Emails (OTP, notifications)</td>
+          <td class="cost-free">Free (3,000/month)</td>
+          <td>✅ Haan</td>
+        </tr>
+        <tr>
+          <td><strong>Google OAuth</strong></td>
+          <td>Google se login</td>
+          <td class="cost-free">Free forever</td>
+          <td>⭕ Optional</td>
+        </tr>
+        <tr>
+          <td><strong>AWS (12 months baad)</strong></td>
+          <td>EC2 Server (t2.micro)</td>
+          <td class="cost-paid">~₹700–1,200/month</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">
+      💡 <strong>Pehle saal sirf domain ka kharcha:</strong> ₹800–1,500. Baaki sab bilkul free!<br/><br/>
+      ⚠️ <strong>12 mahine baad:</strong> AWS free tier khatam hoga. Tab developer aapko better/cheaper hosting options suggest karenge (jaise reserved instances ya other providers).
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>Ye document developer ne prepare kiya hai — sirf client ke liye.</p>
+    <p style="margin-top:6px; color:#d1d5db;">Koi bhi step mein confusion ho to developer se poochein. © 2025</p>
+  </div>
+
+</div>
+</body>
+</html>

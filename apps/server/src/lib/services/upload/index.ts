@@ -81,17 +81,39 @@ async function deleteFromS3(publicId: string): Promise<void> {
 
 // ─── Unified API ───────────────────────────────────────────────────────────────
 
+const CLOUDINARY_MAX = 10 * 1024 * 1024; // 10 MB
+
 export async function uploadFile(
   buffer: Buffer,
   mimetype: string,
   originalName: string,
   folder = 'olx',
-): Promise<{ url: string; publicId: string }> {
-  if (isProd()) return uploadToS3(buffer, mimetype, originalName, folder);
-  return uploadToCloudinary(buffer, mimetype, folder);
+): Promise<{ url: string; publicId: string; awsUrl?: string }> {
+  if (buffer.length >= CLOUDINARY_MAX) {
+    // >= 10 MB → AWS S3 only
+    const result = await uploadToS3(buffer, mimetype, originalName, folder);
+    return { url: result.url, publicId: result.publicId, awsUrl: result.url };
+  }
+
+  // < 10 MB → Cloudinary (primary) + AWS S3 (backup), parallel
+  const [cdn, s3] = await Promise.allSettled([
+    uploadToCloudinary(buffer, mimetype, folder),
+    uploadToS3(buffer, mimetype, originalName, folder),
+  ]);
+
+  const cdnOk = cdn.status === 'fulfilled';
+  const s3Ok = s3.status === 'fulfilled';
+
+  return {
+    url: cdnOk ? cdn.value.url : s3Ok ? (s3.value as { url: string }).url : '',
+    publicId: cdnOk ? cdn.value.publicId : s3Ok ? (s3.value as { publicId: string }).publicId : '',
+    awsUrl: s3Ok ? (s3.value as { url: string }).url : undefined,
+  };
 }
 
 export async function deleteFile(publicId: string, mimetype?: string): Promise<void> {
-  if (isProd()) return deleteFromS3(publicId);
-  return deleteFromCloudinary(publicId, mimetype);
+  await Promise.allSettled([
+    deleteFromCloudinary(publicId, mimetype),
+    deleteFromS3(publicId),
+  ]);
 }

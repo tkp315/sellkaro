@@ -4,15 +4,29 @@ import { useTheme } from '@/hooks/useTheme';
 const LINKS = [
   {
     heading: 'Popular Categories',
-    items: ['Electronics', 'Cars', 'Furniture', 'Mobiles', 'Fashion'],
+    items: [
+      { label: 'Mobiles & Tablets', to: '/?category=mobiles-tablets' },
+      { label: 'Electronics', to: '/?category=electronics-appliances' },
+      { label: 'Cars & Vehicles', to: '/?category=vehicles' },
+      { label: 'Furniture', to: '/?category=furniture' },
+      { label: 'Fashion & Beauty', to: '/?category=fashion-beauty' },
+    ],
   },
   {
     heading: 'Company',
-    items: ['About OLX', 'Careers', 'Press', 'Blog'],
+    items: [
+      { label: 'About Us', to: '/about' },
+      { label: 'Contact Us', to: '/contact' },
+    ],
   },
   {
-    heading: 'Help',
-    items: ['Safety Tips', 'Help Center', 'Terms of Use', 'Privacy Policy'],
+    heading: 'Help & Legal',
+    items: [
+      { label: 'Help Center', to: '/help' },
+      { label: 'Safety Tips', to: '/safety' },
+      { label: 'Terms & Conditions', to: '/terms' },
+      { label: 'Privacy Policy', to: '/privacy' },
+    ],
   },
 ];
 
@@ -50,9 +64,9 @@ export function Footer() {
               </h4>
               <ul className="space-y-2">
                 {col.items.map((item) => (
-                  <li key={item}>
-                    <Link to="/" className="text-sm text-white/60 hover:text-white transition">
-                      {item}
+                  <li key={item.label}>
+                    <Link to={item.to} className="text-sm text-white/60 hover:text-white transition">
+                      {item.label}
                     </Link>
                   </li>
                 ))}
@@ -66,9 +80,9 @@ export function Footer() {
             © {new Date().getFullYear()} OLX Clone. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-white/40">
-            <Link to="/" className="hover:text-white transition">Terms</Link>
-            <Link to="/" className="hover:text-white transition">Privacy</Link>
-            <Link to="/" className="hover:text-white transition">Cookies</Link>
+            <Link to="/terms" className="hover:text-white transition">Terms</Link>
+            <Link to="/privacy" className="hover:text-white transition">Privacy</Link>
+            <Link to="/safety" className="hover:text-white transition">Safety</Link>
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ export interface CreateAdDto {
   categoryId: string;
   subcategoryId?: string;
   imageUrls?: string[];
+  imageAwsUrls?: (string | null)[];
 }
 
 export interface UpdateAdDto {
@@ -24,4 +25,6 @@ export interface UpdateAdDto {
   area?: string;
   lat?: number;
   lng?: number;
+  imageUrls?: string[];
+  imageAwsUrls?: (string | null)[];
 }

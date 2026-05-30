@@ -3,6 +3,9 @@ import api from '@/lib/axios';
 export interface ChatMessage {
   id: string;
   content: string;
+  mediaUrl?: string | null;
+  mediaType?: string | null;
+  awsUrl?: string | null;
   createdAt: string;
   isRead: boolean;
   senderId: string;
@@ -41,8 +44,8 @@ export const chatApi = {
   getChat: (chatId: string) =>
     api.get<{ data: Chat }>(`/buyer/chats/${chatId}`).then((r) => r.data.data),
 
-  sendMessage: (chatId: string, content: string) =>
-    api.post<{ data: ChatMessage }>(`/buyer/chats/${chatId}/messages`, { content }).then((r) => r.data.data),
+  sendMessage: (chatId: string, payload: { content?: string; mediaUrl?: string; mediaType?: string; awsUrl?: string }) =>
+    api.post<{ data: ChatMessage }>(`/buyer/chats/${chatId}/messages`, payload).then((r) => r.data.data),
 
   getMyChats: () =>
     api.get<{ data: Chat[] }>('/buyer/chats').then((r) => r.data.data),

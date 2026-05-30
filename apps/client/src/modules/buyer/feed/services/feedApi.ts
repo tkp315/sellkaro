@@ -18,3 +18,7 @@ export async function revealPhone(adId: string): Promise<{ phone: string }> {
   const res = await api.post<{ data: { phone: string } }>(`/ads/${adId}/reveal-phone`);
   return res.data.data;
 }
+
+export async function reportAd(adId: string, reason: string): Promise<void> {
+  await api.post(`/ads/${adId}/report`, { reason });
+}

@@ -33,3 +33,9 @@ export const revealPhone = asyncHandler(async (req: Request, res: Response) => {
   const result = await feedService.revealPhone(req.params['id']!, req.user!.userId);
   return ApiResponse.ok(result).send(res);
 });
+
+export const reportAd = asyncHandler(async (req: Request, res: Response) => {
+  const { reason } = z.object({ reason: z.string().min(5, 'Please provide a reason') }).parse(req.body);
+  await feedService.reportAd(req.params['id']!, req.user!.userId, reason);
+  return ApiResponse.ok(null, 'Report submitted. Our team will review it.').send(res);
+});

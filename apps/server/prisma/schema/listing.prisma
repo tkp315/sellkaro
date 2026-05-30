@@ -26,6 +26,7 @@ model SellerAd {
   cartItems    CartItem[]
   reports      Report[]         @relation("ReportedAd")
   chats        Chat[]
+  reviews      Review[]
 
   @@index([userId])
   @@index([productId])
@@ -38,6 +39,7 @@ model SellerAd {
 model AdImage {
   id      String  @id @default(cuid())
   url     String
+  awsUrl  String?
   order   Int     @default(0)
   isCover Boolean @default(false)
 
@@ -68,7 +70,10 @@ model Chat {
 
 model Message {
   id        String   @id @default(cuid())
-  content   String
+  content   String   @default("")
+  mediaUrl  String?
+  mediaType String?
+  awsUrl    String?
   createdAt DateTime @default(now())
   isRead    Boolean  @default(false)
 

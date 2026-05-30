@@ -1,0 +1,19 @@
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviewerId String
+  sellerId   String
+  adId       String?
+
+  reviewer User      @relation("ReviewsGiven",    fields: [reviewerId], references: [id], onDelete: Cascade)
+  seller   User      @relation("ReviewsReceived", fields: [sellerId],   references: [id], onDelete: Cascade)
+  ad       SellerAd? @relation(fields: [adId], references: [id], onDelete: SetNull)
+
+  @@unique([reviewerId, sellerId])
+  @@index([sellerId])
+  @@index([reviewerId])
+}

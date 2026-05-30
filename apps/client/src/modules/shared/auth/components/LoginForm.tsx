@@ -23,6 +23,7 @@ function EyeIcon({ open }: { open: boolean }) {
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const {
     register,
@@ -80,9 +81,29 @@ export function LoginForm() {
         </div>
       )}
 
+      {/* T&C Checkbox */}
+      <label className="flex items-start gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={(e) => setTermsAccepted(e.target.checked)}
+          className="mt-0.5 h-4 w-4 rounded border-gray-300 accent-[#002f34] cursor-pointer"
+        />
+        <span className="text-xs text-gray-500 leading-relaxed">
+          I agree to the{' '}
+          <Link to="/terms" target="_blank" className="font-semibold text-[#002f34] hover:underline">
+            Terms & Conditions
+          </Link>{' '}
+          and{' '}
+          <Link to="/privacy" target="_blank" className="font-semibold text-[#002f34] hover:underline">
+            Privacy Policy
+          </Link>
+        </span>
+      </label>
+
       <button
         type="submit"
-        disabled={login.isPending}
+        disabled={login.isPending || !termsAccepted}
         className="btn-primary w-full mt-2"
       >
         {login.isPending ? (

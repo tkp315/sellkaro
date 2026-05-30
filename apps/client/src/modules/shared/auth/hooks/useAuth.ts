@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { connectSocket, disconnectSocket } from '@/lib/socket';
 import { QUERY_KEYS } from '@/utils/constants';
 import { authApi } from '../services/authApi';
 import type { LoginDto, RegisterDto } from '../types';
@@ -48,6 +49,7 @@ export function useVerifyOtp() {
     mutationFn: (dto: { email: string; otp: string }) => authApi.verifyOtp(dto),
     onSuccess: (data) => {
       login(data.user, data.tokens);
+      connectSocket(data.tokens.accessToken);
       const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname;
       navigate(from ?? (data.user.role === 'SELLER' ? '/seller' : '/'));
     },
@@ -88,6 +90,7 @@ export function useLogout() {
   const qc = useQueryClient();
   return useCallback(async () => {
     if (refreshToken) await authApi.logout(refreshToken).catch(() => {});
+    disconnectSocket();
     logout();
     qc.clear();
     navigate('/auth/login');

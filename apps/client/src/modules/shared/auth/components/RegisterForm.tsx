@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useRegister } from '../hooks/useAuth';
 import { registerSchema } from '../validators';
 import { getApiError } from '@/utils/apiError';
@@ -23,6 +23,7 @@ function EyeIcon({ open }: { open: boolean }) {
 
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [searchParams] = useSearchParams();
   const asSeller = searchParams.get('as') === 'seller';
 
@@ -104,9 +105,29 @@ export function RegisterForm() {
         </div>
       )}
 
+      {/* T&C Checkbox */}
+      <label className="flex items-start gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={(e) => setTermsAccepted(e.target.checked)}
+          className="mt-0.5 h-4 w-4 rounded border-gray-300 accent-[#002f34] cursor-pointer"
+        />
+        <span className="text-xs text-gray-500 leading-relaxed">
+          I agree to the{' '}
+          <Link to="/terms" target="_blank" className="font-semibold text-[#002f34] hover:underline">
+            Terms & Conditions
+          </Link>{' '}
+          and{' '}
+          <Link to="/privacy" target="_blank" className="font-semibold text-[#002f34] hover:underline">
+            Privacy Policy
+          </Link>
+        </span>
+      </label>
+
       <button
         type="submit"
-        disabled={signUp.isPending}
+        disabled={signUp.isPending || !termsAccepted}
         className="btn-primary w-full mt-2"
       >
         {signUp.isPending ? (
@@ -133,9 +154,6 @@ export function RegisterForm() {
 
       <GoogleAuthButton />
 
-      <p className="text-center text-xs text-gray-400">
-        By registering you agree to our Terms of Service
-      </p>
     </form>
   );
 }

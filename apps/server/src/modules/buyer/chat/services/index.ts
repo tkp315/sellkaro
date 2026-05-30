@@ -1,6 +1,7 @@
 import prisma from '@utils/prisma.js';
 import ApiError from '@utils/apiError.js';
 import { notifyNewMessage } from '@modules/shared/notification/services/index.js';
+import { getIo } from '@lib/services/socket/index.js';
 
 export async function getOrCreateChat(buyerId: string, adId: string) {
   const ad = await prisma.sellerAd.findFirst({
@@ -42,17 +43,25 @@ export async function getChat(chatId: string, userId: string) {
   return chat;
 }
 
-export async function sendMessage(chatId: string, senderId: string, content: string) {
+export async function sendMessage(
+  chatId: string,
+  senderId: string,
+  content: string,
+  media?: { mediaUrl?: string; mediaType?: string; awsUrl?: string },
+) {
   const chat = await prisma.chat.findFirst({
     where: { id: chatId, OR: [{ buyerId: senderId }, { sellerId: senderId }] },
   });
   if (!chat) throw ApiError.notFound('Chat not found');
 
   const message = await prisma.message.create({
-    data: { chatId, senderId, content },
+    data: { chatId, senderId, content, ...(media ?? {}) },
   });
 
   await prisma.chat.update({ where: { id: chatId }, data: { updatedAt: new Date() } });
+
+  // Emit real-time event to chat room
+  getIo()?.to(`chat:${chatId}`).emit('new_message', message);
 
   const fullChat = await prisma.chat.findUnique({
     where: { id: chatId },

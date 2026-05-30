@@ -17,7 +17,7 @@ export function useChatDetail(chatId: string) {
   return useQuery({
     queryKey: ['chat', chatId],
     queryFn: () => chatApi.getChat(chatId),
-    refetchInterval: 5_000,
+    refetchInterval: 30_000, // socket handles real-time, poll as fallback only
   });
 }
 
@@ -36,7 +36,8 @@ export function useStartChat() {
 export function useSendMessage(chatId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (content: string) => chatApi.sendMessage(chatId, content),
+    mutationFn: (payload: { content?: string; mediaUrl?: string; mediaType?: string; awsUrl?: string }) =>
+      chatApi.sendMessage(chatId, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['chat', chatId] });
       void queryClient.invalidateQueries({ queryKey: ['chats'] });
