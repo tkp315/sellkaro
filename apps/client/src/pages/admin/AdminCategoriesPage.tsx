@@ -94,7 +94,7 @@ function CategoryForm({
             type="number" className="input-field" placeholder="1" />
         </div>
       </div>
-      {error && <p className="text-xs text-red-600 rounded-lg bg-red-50 px-3 py-2">{getApiError(error)}</p>}
+      {error ? <p className="text-xs text-red-600 rounded-lg bg-red-50 px-3 py-2">{getApiError(error)}</p> : null}
       <button type="submit" disabled={isPending} className="btn-primary w-full">
         {isPending ? 'Saving...' : 'Save'}
       </button>

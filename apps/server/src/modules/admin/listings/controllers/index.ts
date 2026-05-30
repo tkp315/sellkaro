@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import asyncHandler from '@utils/asyncHandler.js';
@@ -16,9 +17,9 @@ export const getAds = asyncHandler(async (req: Request, res: Response) => {
 
 export const removeAd = asyncHandler(async (req: Request, res: Response) => {
   const { note } = z.object({ note: z.string().optional() }).parse(req.body);
-  return ApiResponse.ok(await svc.removeAd(req.user!.userId, req.params['adId']!, note)).send(res);
+  return ApiResponse.ok(await svc.removeAd(req.user!.userId, p(req, 'adId'), note)).send(res);
 });
 
 export const featureAd = asyncHandler(async (req: Request, res: Response) => {
-  return ApiResponse.ok(await svc.featureAd(req.user!.userId, req.params['adId']!)).send(res);
+  return ApiResponse.ok(await svc.featureAd(req.user!.userId, p(req, 'adId'))).send(res);
 });

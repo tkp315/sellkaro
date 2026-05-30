@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import asyncHandler from '@utils/asyncHandler.js';
@@ -25,19 +26,19 @@ export const createOrUpdateReview = asyncHandler(async (req: Request, res: Respo
 });
 
 export const getSellerReviews = asyncHandler(async (req: Request, res: Response) => {
-  const data = await svc.getSellerReviews(req.params['sellerId']!);
+  const data = await svc.getSellerReviews(p(req, 'sellerId'));
   return ApiResponse.ok(data).send(res);
 });
 
 export const getMyReview = asyncHandler(async (req: Request, res: Response) => {
   const review = await svc.getMyReviewForSeller(
     req.user!.userId,
-    req.params['sellerId']!,
+    p(req, 'sellerId'),
   );
   return ApiResponse.ok(review).send(res);
 });
 
 export const deleteReview = asyncHandler(async (req: Request, res: Response) => {
-  await svc.deleteReview(req.user!.userId, req.params['sellerId']!);
+  await svc.deleteReview(req.user!.userId, p(req, 'sellerId'));
   return ApiResponse.ok(null, 'Review deleted').send(res);
 });

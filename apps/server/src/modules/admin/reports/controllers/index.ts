@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import asyncHandler from '@utils/asyncHandler.js';
@@ -26,10 +27,10 @@ export const createReport = asyncHandler(async (req: Request, res: Response) => 
 
 export const resolveReport = asyncHandler(async (req: Request, res: Response) => {
   const { adminNote } = z.object({ adminNote: z.string().optional() }).parse(req.body);
-  return ApiResponse.ok(await svc.resolveReport(req.user!.userId, req.params['reportId']!, adminNote)).send(res);
+  return ApiResponse.ok(await svc.resolveReport(req.user!.userId, p(req, 'reportId'), adminNote)).send(res);
 });
 
 export const dismissReport = asyncHandler(async (req: Request, res: Response) => {
   const { adminNote } = z.object({ adminNote: z.string().optional() }).parse(req.body);
-  return ApiResponse.ok(await svc.dismissReport(req.user!.userId, req.params['reportId']!, adminNote)).send(res);
+  return ApiResponse.ok(await svc.dismissReport(req.user!.userId, p(req, 'reportId'), adminNote)).send(res);
 });

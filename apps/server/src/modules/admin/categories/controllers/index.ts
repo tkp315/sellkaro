@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import asyncHandler from '@utils/asyncHandler.js';
@@ -46,28 +47,28 @@ export const createCategory = asyncHandler(async (req: Request, res: Response) =
 
 export const updateCategory = asyncHandler(async (req: Request, res: Response) => {
   const dto = parseOrThrow(updateSchema, req.body);
-  const data = await svc.updateCategory(req.params['id']!, dto);
+  const data = await svc.updateCategory(p(req, 'id'), dto);
   return ApiResponse.ok(data, 'Category updated').send(res);
 });
 
 export const deleteCategory = asyncHandler(async (req: Request, res: Response) => {
-  await svc.deleteCategory(req.params['id']!);
+  await svc.deleteCategory(p(req, 'id'));
   return ApiResponse.ok(null, 'Category deleted').send(res);
 });
 
 export const createSubcategory = asyncHandler(async (req: Request, res: Response) => {
   const dto = parseOrThrow(subcategorySchema, req.body);
-  const data = await svc.createSubcategory(req.params['categoryId']!, dto);
+  const data = await svc.createSubcategory(p(req, 'categoryId'), dto);
   return ApiResponse.created(data, 'Subcategory created').send(res);
 });
 
 export const updateSubcategory = asyncHandler(async (req: Request, res: Response) => {
   const dto = parseOrThrow(updateSchema, req.body);
-  const data = await svc.updateSubcategory(req.params['subId']!, dto);
+  const data = await svc.updateSubcategory(p(req, 'subId'), dto);
   return ApiResponse.ok(data, 'Subcategory updated').send(res);
 });
 
 export const deleteSubcategory = asyncHandler(async (req: Request, res: Response) => {
-  await svc.deleteSubcategory(req.params['subId']!);
+  await svc.deleteSubcategory(p(req, 'subId'));
   return ApiResponse.ok(null, 'Subcategory deleted').send(res);
 });
