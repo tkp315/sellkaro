@@ -26,10 +26,13 @@ export default function ChatConversationPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const qc = useQueryClient();
 
-  // Join socket room for real-time messages
+  // Join socket room for real-time messages (re-joins on reconnect too)
   useEffect(() => {
     if (!chatId) return;
-    socket.emit('join_chat', chatId);
+
+    const join = () => socket.emit('join_chat', chatId);
+    join();                     // join now (buffered until connected)
+    socket.on('connect', join); // re-join after any reconnect
 
     const handler = (msg: ChatMessage) => {
       qc.setQueryData(['chat', chatId], (old: any) => {
@@ -42,6 +45,7 @@ export default function ChatConversationPage() {
 
     socket.on('new_message', handler);
     return () => {
+      socket.off('connect', join);
       socket.off('new_message', handler);
       socket.emit('leave_chat', chatId);
     };
