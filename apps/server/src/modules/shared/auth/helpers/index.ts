@@ -120,7 +120,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
   try {
     const token = authHeader.slice(7);
     const payload = verifyAccessToken(token);
-    req.user = payload;
+    req.user = payload as { userId: string; email: string; role: string };
     next();
   } catch {
     res.status(401).json({ success: false, error: 'Invalid or expired token' });

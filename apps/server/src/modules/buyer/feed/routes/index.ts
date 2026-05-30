@@ -7,5 +7,6 @@ const router = Router();
 router.get('/', ctrl.getFeed);
 router.get('/:id', ctrl.getAdDetail);
 router.post('/:id/reveal-phone', authenticate, ctrl.revealPhone);
+router.post('/:id/report', authenticate, ctrl.reportAd);
 
 export default router;

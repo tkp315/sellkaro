@@ -27,12 +27,12 @@ export default function LoginPage() {
               className="text-6xl font-black tracking-tighter"
               style={{ color: theme.colors.accent.DEFAULT }}
             >
-              OLX
+              Sell Karo
             </span>
           </div>
           <h2 className="text-3xl font-bold leading-snug">
             {asSeller ? (
-              <>Start Selling on<br /><span style={{ color: theme.colors.accent.DEFAULT }}>OLX Today</span></>
+              <>Start Selling on<br /><span style={{ color: theme.colors.accent.DEFAULT }}>Sell Karo Today</span></>
             ) : (
               <>India's #1<br /><span style={{ color: theme.colors.accent.DEFAULT }}>Used Goods</span> Marketplace</>
             )}
@@ -66,7 +66,7 @@ export default function LoginPage() {
               className="text-4xl font-black tracking-tighter"
               style={{ color: theme.colors.brand.DEFAULT }}
             >
-              OLX
+              Sell Karo
             </span>
           </div>
 
@@ -83,7 +83,7 @@ export default function LoginPage() {
               {asSeller ? 'Login to Start Selling' : 'Welcome back'}
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              {asSeller ? 'Sign in to access your seller dashboard' : 'Sign in to continue to OLX'}
+              {asSeller ? 'Sign in to access your seller dashboard' : 'Sign in to continue to Sell Karo'}
             </p>
           </div>
 
@@ -92,7 +92,7 @@ export default function LoginPage() {
           </div>
 
           <p className="mt-6 text-center text-sm text-gray-500">
-            New to OLX?{' '}
+            New to Sell Karo?{' '}
             <Link
               to={asSeller ? '/auth/register?as=seller' : '/auth/register'}
               className="font-semibold hover:underline"

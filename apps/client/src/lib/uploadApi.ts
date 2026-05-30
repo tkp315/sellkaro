@@ -3,6 +3,7 @@ import api from '@/lib/axios';
 export interface UploadResult {
   url: string;
   publicId: string;
+  awsUrl?: string;
 }
 
 export async function uploadFiles(files: File[]): Promise<UploadResult[]> {

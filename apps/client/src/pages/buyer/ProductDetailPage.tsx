@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useAdDetail } from '@/modules/buyer/feed/hooks/useFeed';
-import { revealPhone } from '@/modules/buyer/feed/services/feedApi';
+import { revealPhone, reportAd } from '@/modules/buyer/feed/services/feedApi';
+import { useSubmitReview, useMyReview } from '@/modules/shared/review/hooks/useReviews';
+import StarRating from '@/components/ui/StarRating';
 import { useToggleWishlist, useWishlistIds } from '@/modules/buyer/wishlist/hooks/useWishlist';
 import { useAddToCart, useCartAdIds } from '@/modules/buyer/cart/hooks/useCart';
 import { useStartChat } from '@/modules/buyer/chat/hooks/useChat';
@@ -18,6 +20,12 @@ export default function ProductDetailPage() {
   const { data: ad, isLoading, isError } = useAdDetail(id!);
   const [activeImg, setActiveImg] = useState(0);
   const [phone, setPhone] = useState<string | null>(null);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [reportDone, setReportDone] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
   const { theme, getConditionStyle } = useTheme();
   const { isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
@@ -44,6 +52,15 @@ export default function ProductDetailPage() {
     mutationFn: () => revealPhone(id!),
     onSuccess: (data) => setPhone(data.phone),
   });
+
+  const reportMutation = useMutation({
+    mutationFn: () => reportAd(id!, reportReason),
+    onSuccess: () => { setReportDone(true); setShowReportModal(false); setReportReason(''); },
+  });
+
+  const sellerId = ad?.user.id ?? '';
+  const submitReview = useSubmitReview(sellerId);
+  const { data: myReview } = useMyReview(sellerId);
 
   if (isLoading) {
     return (
@@ -338,6 +355,33 @@ export default function ProductDetailPage() {
                 </Link>
               </div>
             )}
+
+            {/* Rate this seller */}
+            {!isOwnAd && isAuthenticated && (
+              <div className="mt-4 border-t border-gray-100 pt-4">
+                {myReview ? (
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Your rating</p>
+                      <StarRating value={myReview.rating} size="sm" />
+                    </div>
+                    <button
+                      onClick={() => { setReviewRating(myReview.rating); setReviewComment(myReview.comment ?? ''); setShowReviewModal(true); }}
+                      className="text-xs text-[#002f34] hover:underline"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowReviewModal(true)}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                  >
+                    ⭐ Rate this Seller
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Safety tips */}
@@ -350,8 +394,130 @@ export default function ProductDetailPage() {
               <li>• Don't share personal financial info</li>
             </ul>
           </div>
+
+          {/* Report ad */}
+          {!isOwnAd && (
+            <div className="text-center">
+              {reportDone ? (
+                <p className="text-xs text-green-600 font-medium">✓ Report submitted. Thank you!</p>
+              ) : (
+                <button
+                  onClick={() => { if (requireAuth()) setShowReportModal(true); }}
+                  className="text-xs text-gray-400 hover:text-red-500 transition underline"
+                >
+                  🚩 Report this ad
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+          <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h3 className="font-semibold text-gray-900">🚩 Report this Ad</h3>
+              <button onClick={() => setShowReportModal(false)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+            </div>
+            <div className="p-5 space-y-3">
+              <p className="text-sm text-gray-500">Why are you reporting this ad?</p>
+              {[
+                'Fraudulent or scam listing',
+                'Prohibited or illegal item',
+                'Misleading price or description',
+                'Duplicate or spam listing',
+                'Offensive content',
+                'Other',
+              ].map((reason) => (
+                <label key={reason} className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="report_reason"
+                    value={reason}
+                    checked={reportReason === reason}
+                    onChange={() => setReportReason(reason)}
+                    className="accent-[#002f34]"
+                  />
+                  <span className="text-sm text-gray-700">{reason}</span>
+                </label>
+              ))}
+              {reportMutation.isError && (
+                <p className="text-xs text-red-600">{getApiError(reportMutation.error)}</p>
+              )}
+              <div className="flex gap-3 pt-2">
+                <button onClick={() => setShowReportModal(false)}
+                  className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition">
+                  Cancel
+                </button>
+                <button
+                  onClick={() => reportMutation.mutate()}
+                  disabled={!reportReason || reportMutation.isPending}
+                  className="flex-1 rounded-xl bg-red-500 py-2.5 text-sm font-semibold text-white hover:bg-red-600 transition disabled:opacity-50"
+                >
+                  {reportMutation.isPending ? 'Submitting...' : 'Submit Report'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {showReviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+          <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h3 className="font-semibold text-gray-900">⭐ Rate this Seller</h3>
+              <button onClick={() => setShowReviewModal(false)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <p className="text-sm text-gray-600 mb-2">Your rating *</p>
+                <StarRating value={reviewRating} onChange={setReviewRating} size="lg" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">
+                  Comment <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <textarea
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  rows={3}
+                  maxLength={500}
+                  className="input-field resize-none"
+                  placeholder="Share your experience with this seller..."
+                />
+                <p className="text-xs text-gray-400 text-right mt-0.5">{reviewComment.length}/500</p>
+              </div>
+              {submitReview.isError && (
+                <p className="text-xs text-red-600">{getApiError(submitReview.error)}</p>
+              )}
+              {submitReview.isSuccess && (
+                <p className="text-xs text-green-600">✓ Review submitted!</p>
+              )}
+              <div className="flex gap-3 pt-1">
+                <button onClick={() => setShowReviewModal(false)}
+                  className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition">
+                  Cancel
+                </button>
+                <button
+                  onClick={() => submitReview.mutate(
+                    { sellerId, rating: reviewRating, comment: reviewComment || undefined, adId: id },
+                    { onSuccess: () => setShowReviewModal(false) }
+                  )}
+                  disabled={reviewRating === 0 || submitReview.isPending}
+                  className="flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition disabled:opacity-50"
+                  style={{ backgroundColor: theme.colors.brand.DEFAULT }}
+                >
+                  {submitReview.isPending ? 'Submitting...' : myReview ? 'Update Review' : 'Submit Review'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { p } from '@utils/param.js';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import asyncHandler from '@utils/asyncHandler.js';
@@ -14,7 +15,7 @@ export const getUnreadCount = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const markRead = asyncHandler(async (req: Request, res: Response) => {
-  await svc.markRead(req.user!.userId, req.params['id']!);
+  await svc.markRead(req.user!.userId, p(req, 'id'));
   return ApiResponse.ok({ read: true }).send(res);
 });
 

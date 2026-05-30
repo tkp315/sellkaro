@@ -43,6 +43,7 @@ export async function createAd(userId: string, dto: CreateAdDto) {
         ? {
             create: dto.imageUrls.map((url, i) => ({
               url,
+              awsUrl: dto.imageAwsUrls?.[i] ?? null,
               order: i,
               isCover: i === 0,
             })),
@@ -75,7 +76,13 @@ export async function updateAd(userId: string, adId: string, dto: UpdateAdDto) {
     await prisma.adImage.deleteMany({ where: { adId } });
     if (dto.imageUrls.length) {
       await prisma.adImage.createMany({
-        data: dto.imageUrls.map((url, i) => ({ adId, url, order: i, isCover: i === 0 })),
+        data: dto.imageUrls.map((url, i) => ({
+          adId,
+          url,
+          awsUrl: dto.imageAwsUrls?.[i] ?? null,
+          order: i,
+          isCover: i === 0,
+        })),
       });
     }
   }

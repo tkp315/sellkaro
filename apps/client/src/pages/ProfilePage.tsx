@@ -84,7 +84,7 @@ export default function ProfilePage() {
                 src={currentAvatar}
                 alt="avatar"
                 className="h-20 w-20 rounded-full object-cover ring-2 ring-offset-2"
-                style={{ ringColor: theme.colors.brand.DEFAULT }}
+                style={{ '--tw-ring-color': theme.colors.brand.DEFAULT } as React.CSSProperties}
               />
             ) : (
               <div

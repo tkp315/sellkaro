@@ -9,6 +9,7 @@
     "rootDir": "src",
     "outDir": "dist",
     "baseUrl": "src",
+    "ignoreDeprecations": "6.0",
 
     // Path Aliases (optional but useful)
     "paths": {
@@ -46,5 +47,5 @@
     "isolatedModules": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "src/test/**/*"]
 }

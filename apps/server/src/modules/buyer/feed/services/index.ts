@@ -99,6 +99,16 @@ export async function revealPhone(adId: string, userId: string) {
   return { phone };
 }
 
+export async function reportAd(adId: string, userId: string, reason: string) {
+  const ad = await prisma.sellerAd.findUnique({ where: { id: adId } });
+  if (!ad) throw ApiError.notFound('Ad not found');
+  if (ad.userId === userId) throw ApiError.badRequest('Cannot report your own ad');
+
+  await prisma.report.create({
+    data: { type: 'AD', reason, reportedById: userId, adId },
+  });
+}
+
 export async function getAdDetail(adId: string) {
   const ad = await prisma.sellerAd.findFirst({
     where: { id: adId, status: 'ACTIVE' },
