@@ -7,46 +7,10 @@ on:
     branches: [main]
 
 jobs:
-  # ─── 1. CI — Typecheck both apps ─────────────────────────────────────────────
+  # ─── 1. CI — Build both apps (catch errors before deploy) ────────────────────
   ci:
-    name: TypeCheck
+    name: Build & Typecheck
     runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install root deps
-        run: npm ci
-
-      - name: Generate Prisma client
-        working-directory: apps/server
-        run: npx prisma generate --schema=./prisma/schema
-        env:
-          DATABASE_URL: postgresql://user:pass@localhost:5432/db
-
-      - name: Build server (typecheck + compile)
-        working-directory: apps/server
-        run: npm run build
-
-      - name: Build client (typecheck + bundle)
-        working-directory: apps/client
-        run: npm run build
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL }}
-          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
-
-  # ─── 2. Deploy Client → S3 + CloudFront ──────────────────────────────────────
-  deploy-client:
-    name: Deploy Client
-    runs-on: ubuntu-latest
-    needs: ci                          # only runs if CI passes
-    if: github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
@@ -59,33 +23,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate --schema=./prisma/schema
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db
+
+      - name: Build server
+        working-directory: apps/server
+        run: npm run build
+
       - name: Build client
         working-directory: apps/client
         run: npm run build
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL }}
-          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Sync to S3
-        run: aws s3 sync apps/client/dist s3://${{ secrets.S3_BUCKET_CLIENT }} --delete
-
-      - name: Invalidate CloudFront cache
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/*"
-
-  # ─── 3. Deploy Server → EC2 ──────────────────────────────────────────────────
+  # ─── 2. Deploy Server → EC2 ──────────────────────────────────────────────────
+  #    (Frontend auto-deploys via Vercel — no job needed here)
   deploy-server:
-    name: Deploy Server
+    name: Deploy Server to EC2
     runs-on: ubuntu-latest
     needs: ci                          # only runs if CI passes
     if: github.ref == 'refs/heads/main'
@@ -99,9 +54,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             set -e
-            cd /home/ubuntu/olx
+            cd /home/ubuntu/sellkaro
 
             echo "📥 Pulling latest code..."
+            git checkout main
             git pull origin main
 
             echo "📦 Installing dependencies (workspace root)..."
