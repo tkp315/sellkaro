@@ -25,7 +25,10 @@
       "Bash(Select-String -Pattern \".\")",
       "PowerShell(git check-ignore *)",
       "PowerShell(Remove-Item *)",
-      "PowerShell(cd D:\\\\freelance\\\\olx; git ls-files apps/server/prisma/migrations/ 2>&1 | Select-Object -First 4; Write-Host \"---count---\"; \\(git ls-files apps/server/prisma/migrations/ | Measure-Object\\).Count)"
+      "PowerShell(cd D:\\\\freelance\\\\olx; git ls-files apps/server/prisma/migrations/ 2>&1 | Select-Object -First 4; Write-Host \"---count---\"; \\(git ls-files apps/server/prisma/migrations/ | Measure-Object\\).Count)",
+      "Bash(git merge *)",
+      "Bash(git push *)",
+      "PowerShell(cd D:\\\\freelance\\\\olx\\\\apps\\\\server; npx tsc --noEmit 2>&1 | Select-Object -First 5; Write-Host \"exit: $LASTEXITCODE\")"
     ]
   }
 }
