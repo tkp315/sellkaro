@@ -39,21 +39,9 @@ export default function LoginPage() {
           </h2>
           <p className="mt-4 text-base text-white/70 leading-relaxed">
             {asSeller
-              ? 'List your items for free, reach crores of buyers, and sell faster with zero commission.'
-              : 'Buy & sell anything — from electronics to cars, furniture to fashion. Millions of listings, zero commission.'}
+              ? 'List your items for free and sell faster with zero commission.'
+              : 'Buy & sell anything — from electronics to cars, furniture to fashion. Zero commission.'}
           </p>
-
-          <div className="mt-10 grid grid-cols-3 gap-4 text-center">
-            {(asSeller
-              ? [{ val: 'Free', label: 'Listing' }, { val: '0%', label: 'Commission' }, { val: '1000+', label: 'Cities' }]
-              : [{ val: '50M+', label: 'Active Users' }, { val: '100M+', label: 'Listings' }, { val: '1000+', label: 'Cities' }]
-            ).map((s) => (
-              <div key={s.label} className="rounded-xl bg-white/10 p-3">
-                <p className="text-xl font-bold" style={{ color: theme.colors.accent.DEFAULT }}>{s.val}</p>
-                <p className="mt-0.5 text-xs text-white/60">{s.label}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 

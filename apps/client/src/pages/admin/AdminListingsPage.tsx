@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { adminApi } from '@/modules/admin/services/adminApi';
 import { useTheme } from '@/hooks/useTheme';
 import { formatPrice, formatRelativeTime } from '@/utils/format';
+import Pagination from '@/components/ui/Pagination';
 
 const STATUSES = ['', 'ACTIVE', 'PAUSED', 'SOLD', 'REMOVED'];
 
@@ -122,18 +123,8 @@ export default function AdminListingsPage() {
         })}
       </div>
 
-      {pagination && pagination.totalPages > 1 && (
-        <div className="mt-5 flex items-center justify-center gap-3">
-          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}
-            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm hover:bg-gray-50 disabled:opacity-40 transition">
-            ← Prev
-          </button>
-          <span className="text-sm text-gray-600">Page {page} of {pagination.totalPages}</span>
-          <button disabled={page >= pagination.totalPages} onClick={() => setPage((p) => p + 1)}
-            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm hover:bg-gray-50 disabled:opacity-40 transition">
-            Next →
-          </button>
-        </div>
+      {pagination && (
+        <Pagination page={page} totalPages={pagination.totalPages} onPageChange={setPage} className="mt-5" />
       )}
     </div>
   );

@@ -9,6 +9,8 @@ import {
   useDeleteSubcategory,
 } from '@/modules/admin/categories/hooks/useCategoryAdmin';
 import { getApiError } from '@/utils/apiError';
+import { usePagination } from '@/hooks/usePagination';
+import Pagination from '@/components/ui/Pagination';
 import type { AdminCategory, AdminSubCategory } from '@/modules/admin/categories/services/categoryAdminApi';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -115,6 +117,7 @@ export default function AdminCategoriesPage() {
   const { data: categories = [], isLoading } = useAdminCategories();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [modal, setModal] = useState<Modal>(null);
+  const { page, goToPage, totalPages, pageItems } = usePagination(categories, 10);
 
   const createCat = useCreateCategory();
   const updateCat = useUpdateCategory();
@@ -197,7 +200,7 @@ export default function AdminCategoriesPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {categories.map((cat) => (
+          {pageItems.map((cat) => (
             <div key={cat.id} className="border border-gray-200 rounded-xl overflow-hidden">
               {/* Category row */}
               <div className="flex items-center gap-3 px-4 py-3 bg-white">
@@ -289,6 +292,10 @@ export default function AdminCategoriesPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {categories.length > 0 && (
+        <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} className="mt-6" />
       )}
 
       {/* Modals */}

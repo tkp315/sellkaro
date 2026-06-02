@@ -29,7 +29,7 @@ export default function RegisterPage() {
             <span style={{ color: theme.colors.accent.DEFAULT }}>earning today</span>
           </h2>
           <p className="mt-4 text-base text-white/70 leading-relaxed">
-            List your items in under 2 minutes. Reach crores of buyers across India. Zero commission, always.
+            List your items in under 2 minutes. Reach buyers across India. Zero commission, always.
           </p>
 
           <div className="mt-10 space-y-3 text-left">
@@ -70,7 +70,7 @@ export default function RegisterPage() {
               {asSeller ? 'Create Seller Account' : 'Create your account'}
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              {asSeller ? 'Start selling on withSell for free' : 'Join millions of buyers and sellers'}
+              {asSeller ? 'Start selling on withSell for free' : 'Sign up to start buying and selling'}
             </p>
           </div>
 
