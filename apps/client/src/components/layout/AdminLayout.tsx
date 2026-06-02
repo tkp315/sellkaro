@@ -20,7 +20,7 @@ export default function AdminLayout() {
         style={{ backgroundColor: theme.colors.brand.DEFAULT }}
       >
         <div className="flex items-center gap-2 px-5 py-5 border-b border-white/10">
-          <span className="text-xl font-black tracking-tighter" style={{ color: theme.colors.accent.DEFAULT }}>OLX</span>
+          <span className="text-xl font-black tracking-tighter" style={{ color: theme.colors.accent.DEFAULT }}>withSell</span>
           <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Admin</span>
         </div>
 
@@ -53,7 +53,7 @@ export default function AdminLayout() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile top bar */}
         <div className="flex md:hidden items-center gap-3 px-4 py-3 shadow-sm" style={{ backgroundColor: theme.colors.brand.DEFAULT }}>
-          <span className="text-lg font-black tracking-tighter" style={{ color: theme.colors.accent.DEFAULT }}>OLX Admin</span>
+          <span className="text-lg font-black tracking-tighter" style={{ color: theme.colors.accent.DEFAULT }}>withSell Admin</span>
           <div className="ml-auto flex gap-1">
             {NAV.map(({ to, icon, end }) => (
               <NavLink key={to} to={to} end={end}

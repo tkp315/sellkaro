@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Server Deployment Guide — Sellkaro</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    .page { max-width: 860px; margin: 0 auto; padding: 40px 38px; }
+
+    /* Header */
+    .header {
+      background: #002f34;
+      color: white;
+      padding: 32px 36px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    .header h1 { font-size: 25px; font-weight: 800; letter-spacing: -0.5px; }
+    .header p { color: rgba(255,255,255,0.7); margin-top: 6px; font-size: 13.5px; }
+    .header .badge {
+      display: inline-block; background: #ffca28; color: #002f34;
+      font-weight: 700; font-size: 11px; padding: 3px 10px;
+      border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.5px;
+    }
+
+    /* Architecture box */
+    .arch {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+      padding: 18px 22px; margin-bottom: 28px;
+    }
+    .arch h2 { font-size: 15px; color: #002f34; margin-bottom: 12px; }
+    .arch-row {
+      display: flex; align-items: center; gap: 10px; font-size: 13px;
+      padding: 5px 0; color: #334155;
+    }
+    .arch-row code {
+      background: #002f34; color: #ffca28; padding: 2px 8px;
+      border-radius: 5px; font-size: 12px; font-weight: 600;
+    }
+
+    /* Section */
+    .section { margin-bottom: 26px; break-inside: avoid; }
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 16px; font-weight: 700; color: #002f34;
+      margin-bottom: 12px; padding-bottom: 7px; border-bottom: 2px solid #e5e7eb;
+    }
+    .section-num {
+      background: #002f34; color: #ffca28; width: 26px; height: 26px;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0;
+    }
+    .section p.desc { color: #475569; margin-bottom: 10px; font-size: 13px; }
+
+    /* Code block */
+    pre {
+      background: #1e293b; color: #e2e8f0; padding: 12px 16px;
+      border-radius: 8px; font-family: 'Consolas', monospace; font-size: 12px;
+      line-height: 1.55; overflow-x: auto; margin: 8px 0; white-space: pre-wrap;
+      word-break: break-all;
+    }
+    pre .cmt { color: #64748b; }
+    code.inline {
+      background: #f1f5f9; padding: 1px 6px; border-radius: 4px;
+      font-family: 'Consolas', monospace; font-size: 12px; color: #002f34;
+    }
+
+    /* Note boxes */
+    .note {
+      border-radius: 0 8px 8px 0; padding: 10px 14px; margin: 10px 0;
+      font-size: 12.5px; line-height: 1.6;
+    }
+    .note.tip { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af; }
+    .note.warn { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+    .note.danger { background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; }
+
+    ul.steps-list { list-style: none; margin: 6px 0; }
+    ul.steps-list li {
+      padding: 3px 0 3px 18px; position: relative; font-size: 13px; color: #334155;
+    }
+    ul.steps-list li::before {
+      content: "›"; position: absolute; left: 4px; color: #002f34; font-weight: 700;
+    }
+
+    /* Troubleshooting */
+    .trouble {
+      border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px;
+      margin-bottom: 10px; background: #fffafa; break-inside: avoid;
+    }
+    .trouble h4 { color: #b91c1c; font-size: 13px; margin-bottom: 4px; }
+    .trouble .err { font-family: monospace; font-size: 11.5px; color: #7f1d1d; background:#fef2f2; padding: 2px 6px; border-radius: 4px; }
+    .trouble p { font-size: 12.5px; color: #475569; margin-top: 5px; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12.5px; }
+    th { background: #002f34; color: white; padding: 8px 12px; text-align: left; font-weight: 600; }
+    td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    td code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-family: monospace; font-size: 11.5px; }
+
+    .footer {
+      margin-top: 36px; padding-top: 18px; border-top: 1px solid #e5e7eb;
+      text-align: center; color: #94a3b8; font-size: 11.5px;
+    }
+    h3.sub { font-size: 13.5px; color: #002f34; margin: 14px 0 6px; font-weight: 700; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="badge">SERVER DEPLOYMENT RUNBOOK</div>
+    <h1>Sellkaro — Backend Deployment Guide</h1>
+    <p>Node.js + Express + Prisma + PostgreSQL on AWS EC2, with Nginx, SSL, PM2 &amp; GitHub Actions CI/CD. Step-by-step, exactly as deployed.</p>
+  </div>
+
+  <!-- Architecture -->
+  <div class="arch">
+    <h2>🏗️ Architecture</h2>
+    <div class="arch-row"><code>api.awaaz.life</code> → AWS EC2 (Ubuntu) → Nginx → Node server on port 5000</div>
+    <div class="arch-row"><code>awaaz.life</code> → Vercel (React frontend)</div>
+    <div class="arch-row"><code>Database</code> → Supabase PostgreSQL</div>
+    <div class="arch-row"><code>Email</code> → Resend &nbsp;·&nbsp; <code>Media</code> → Cloudinary + AWS S3</div>
+    <div class="arch-row"><code>CI/CD</code> → GitHub Actions (push to main → auto-deploy to EC2)</div>
+  </div>
+
+  <!-- 1. EC2 Launch -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">1</div> Launch EC2 Instance</div>
+    <ul class="steps-list">
+      <li>AWS Console → EC2 → <b>Launch Instance</b></li>
+      <li>Name: <code class="inline">olx-server</code> · OS: <b>Ubuntu 22.04 LTS</b> · Type: <b>t2.micro</b> (Free Tier)</li>
+      <li>Key pair: create new (RSA, <code class="inline">.pem</code>) → <b>download &amp; keep safe</b></li>
+      <li>Security Group — allow inbound ports: <b>22 (SSH), 80 (HTTP), 443 (HTTPS), 5000</b></li>
+      <li>Launch → note the <b>Public IPv4</b> (e.g. <code class="inline">65.0.72.126</code>)</li>
+    </ul>
+    <div class="note warn">⚠️ Public IP reboot pe badalta hai. Permanent rakhne ke liye AWS me <b>Elastic IP</b> allocate karke instance se attach karo (attached rahe to free).</div>
+  </div>
+
+  <!-- 2. SSH -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">2</div> SSH into EC2 (from Windows)</div>
+    <p class="desc">PowerShell me — pehle <code class="inline">.pem</code> permission fix, phir connect:</p>
+    <pre><span class="cmt"># PEM permission fix (one time)</span>
+icacls "C:\path\to\key.pem" /inheritance:r
+icacls "C:\path\to\key.pem" /grant:r "$($env:USERNAME):(R)"
+
+<span class="cmt"># Connect</span>
+ssh -i "C:\path\to\key.pem" ubuntu@65.0.72.126</pre>
+  </div>
+
+  <!-- 3. Install tools -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">3</div> Install Node, PM2, Nginx</div>
+    <pre><span class="cmt"># System update</span>
+sudo apt update &amp;&amp; sudo apt upgrade -y
+
+<span class="cmt"># Node.js 20 via NVM</span>
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+nvm install 20
+
+<span class="cmt"># PM2 (process manager) + Nginx</span>
+npm install -g pm2
+sudo apt install -y nginx git
+
+<span class="cmt"># Verify</span>
+node --version &amp;&amp; pm2 --version &amp;&amp; nginx -v</pre>
+  </div>
+
+  <!-- 4. Swap -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">4</div> Add Swap Memory (IMPORTANT for t2.micro)</div>
+    <p class="desc">1GB RAM <code class="inline">npm ci</code>/build ke liye kam padti hai — process "Killed" (exit 137) ho jata hai. 2GB swap se fix:</p>
+    <pre>sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+<span class="cmt"># Verify — Swap: 2.0Gi dikhna chahiye</span>
+free -h</pre>
+  </div>
+
+  <!-- 5. Clone + install -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">5</div> Clone Repo &amp; Install</div>
+    <pre>cd /home/ubuntu
+git clone https://github.com/tkp315/sellkaro.git
+cd sellkaro
+
+<span class="cmt"># Monorepo — install from ROOT (npm workspaces)</span>
+npm ci</pre>
+    <div class="note tip">💡 Ye <b>npm workspaces monorepo</b> hai. <code class="inline">npm ci</code> hamesha <b>root</b> (<code class="inline">~/sellkaro</code>) se chalao, sub-folder se nahi.</div>
+  </div>
+
+  <!-- 6. Env -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">6</div> Production Environment (.env.prod)</div>
+    <pre>cd ~/sellkaro/apps/server
+cp .env.prod.example .env.prod
+nano .env.prod</pre>
+    <p class="desc">Zaruri values:</p>
+    <pre>NODE_ENV=prod
+PORT=5000
+DATABASE_URL="postgresql://...supabase..."
+JWT_ACCESS_SECRET=&lt;32+ random chars&gt;
+JWT_REFRESH_SECRET=&lt;32+ random chars&gt;
+RESEND_API_KEY=re_xxxxx
+EMAIL_FROM=noreply@awaaz.life
+CLIENT_URL=https://awaaz.life
+CORS_ORIGINS=https://awaaz.life,https://www.awaaz.life
+ADMIN_EMAIL=you@email.com
+AWS_REGION=ap-south-1
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_S3_BUCKET=sell-karo-images</pre>
+    <div class="note danger">🔒 <code class="inline">.env.prod</code> me secrets hai — ise kabhi git me commit mat karo. <code class="inline">.gitignore</code> me hona chahiye.</div>
+  </div>
+
+  <!-- 7. Build -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">7</div> Prisma Generate, Migrate &amp; Build</div>
+    <p class="desc">Order important hai — generate PEHLE, build BAAD me:</p>
+    <pre>cd ~/sellkaro/apps/server
+
+<span class="cmt"># 1. Generate Prisma client (creates src/generated/prisma)</span>
+npm run db:generate:prod
+
+<span class="cmt"># 2. Apply DB migrations</span>
+npm run db:migrate:prod
+
+<span class="cmt"># 3. Build (tsc + tsc-alias + copies prisma client into dist)</span>
+npm run build</pre>
+    <div class="note warn">⚠️ <b>Key fix:</b> <code class="inline">tsc</code> generated Prisma <code class="inline">.js</code> files ko <code class="inline">dist</code> me copy nahi karta. Iss liye build script me <code class="inline">copy:prisma</code> step add kiya gaya hai jo <code class="inline">src/generated</code> → <code class="inline">dist/generated</code> copy karta hai. Warna runtime pe <code class="inline">ERR_MODULE_NOT_FOUND: dist/generated/prisma/index.js</code> aata hai.</div>
+  </div>
+
+  <!-- 8. PM2 -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">8</div> Start with PM2 + Auto-start on Reboot</div>
+    <pre>cd ~/sellkaro/apps/server
+
+<span class="cmt"># Start server</span>
+pm2 start ecosystem.config.cjs --env production
+
+<span class="cmt"># Auto-start on reboot</span>
+pm2 startup
+<span class="cmt"># ^ ye ek 'sudo ...' command print karega — usse copy karke run karo</span>
+pm2 save
+
+<span class="cmt"># Check</span>
+pm2 status
+pm2 logs olx-server</pre>
+    <p class="desc">Logs me dikhna chahiye: <code class="inline">🔌 Socket.io initialized</code> &amp; <code class="inline">🚀 [prod] Server running on port 5000</code></p>
+  </div>
+
+  <!-- 9. DNS -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">9</div> DNS (Hostinger) — point api subdomain</div>
+    <p class="desc">Hostinger → awaaz.life → DNS / Nameservers → Add record:</p>
+    <table>
+      <tr><th>Type</th><th>Name</th><th>Points to</th><th>TTL</th></tr>
+      <tr><td>A</td><td><code>api</code></td><td><code>65.0.72.126</code></td><td>default</td></tr>
+    </table>
+    <p class="desc" style="margin-top:8px;">Verify (5–15 min baad) — sahi IP dikhna chahiye:</p>
+    <pre>ping -c 2 api.awaaz.life   <span class="cmt"># IP (65.0.72.126) dikhe = DNS OK (packet loss normal hai)</span></pre>
+  </div>
+
+  <!-- 10. Nginx -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">10</div> Nginx Reverse Proxy</div>
+    <p class="desc">Config seedha sites-enabled me banao (symlink jhanjhat se bachne ke liye):</p>
+    <pre>sudo tee /etc/nginx/sites-enabled/awaaz > /dev/null &lt;&lt;'EOF'
+server {
+    listen 80;
+    server_name api.awaaz.life;
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        client_max_body_size 50M;
+    }
+}
+EOF
+
+<span class="cmt"># Remove default site, test, reload</span>
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl reload nginx
+
+<span class="cmt"># Test (HTTP)</span>
+curl http://api.awaaz.life/api/v1/categories</pre>
+  </div>
+
+  <!-- 11. SSL -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">11</div> SSL / HTTPS (Certbot)</div>
+    <pre>sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d api.awaaz.life</pre>
+    <p class="desc">Certbot prompts: email daalo → terms <code class="inline">Y</code> → EFF email <code class="inline">N</code> → redirect option <code class="inline">2</code>. Auto-renew khud set ho jata hai.</p>
+    <pre>curl https://api.awaaz.life/api/v1/categories   <span class="cmt"># HTTPS JSON = LIVE 🔒</span></pre>
+  </div>
+
+  <!-- 12. CI/CD -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">12</div> CI/CD — GitHub Actions Auto-Deploy</div>
+    <p class="desc">Workflow: <code class="inline">.github/workflows/deploy.yml</code>. Push to <code class="inline">main</code> → builds → SSH into EC2 → pull + build + pm2 restart.</p>
+    <h3 class="sub">GitHub Secrets (repo → Settings → Secrets and variables → Actions)</h3>
+    <table>
+      <tr><th>Secret</th><th>Value</th></tr>
+      <tr><td><code>EC2_HOST</code></td><td><code>65.0.72.126</code></td></tr>
+      <tr><td><code>EC2_USERNAME</code></td><td><code>ubuntu</code></td></tr>
+      <tr><td><code>EC2_SSH_KEY</code></td><td>Full contents of the <code>.pem</code> private key</td></tr>
+    </table>
+    <p class="desc" style="margin-top:8px;">Push hone par GitHub → <b>Actions</b> tab me run dikhega. Dono jobs green = auto-deploy working.</p>
+  </div>
+
+  <!-- Troubleshooting -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">!</div> Troubleshooting (jo issues aaye)</div>
+
+    <div class="trouble">
+      <h4>ERR_MODULE_NOT_FOUND — dist/generated/prisma/index.js</h4>
+      <span class="err">Cannot find module '.../dist/generated/prisma/index.js'</span>
+      <p>Prisma client <code class="inline">src/generated</code> me banta hai, <code class="inline">tsc</code> use dist me copy nahi karta. Build script me <code class="inline">copy:prisma</code> step se fix. Manual: <code class="inline">cp -r src/generated dist/generated</code> → <code class="inline">pm2 restart</code>.</p>
+    </div>
+
+    <div class="trouble">
+      <h4>tsc-alias: not found</h4>
+      <span class="err">sh: 1: tsc-alias: not found</span>
+      <p>Stale node_modules. Root se reinstall: <code class="inline">cd ~/sellkaro &amp;&amp; npm ci</code>.</p>
+    </div>
+
+    <div class="trouble">
+      <h4>npm ci "Killed" (exit 137)</h4>
+      <span class="err">Process exited with status 137 — Killed</span>
+      <p>Out of Memory (t2.micro 1GB RAM). Fix: 2GB <b>swap</b> add karo (Step 4).</p>
+    </div>
+
+    <div class="trouble">
+      <h4>Frontend CORS blocked</h4>
+      <p><code class="inline">NODE_ENV=prod</code> ko code me handle kiya gaya (pehle sirf 'production' check tha). <code class="inline">CORS_ORIGINS</code> me frontend domain daalo → <code class="inline">pm2 restart olx-server --update-env</code>.</p>
+    </div>
+
+    <div class="trouble">
+      <h4>Build errors only on EC2 (not local)</h4>
+      <p><code class="inline">tsc -b</code> (build mode) <code class="inline">tsc --noEmit</code> se strict hai. CI me asli <code class="inline">npm run build</code> chalao taaki errors pehle pakde jaayein.</p>
+    </div>
+  </div>
+
+  <!-- Cheat sheet -->
+  <div class="section">
+    <div class="section-title"><div class="section-num">★</div> Useful Commands Cheat Sheet</div>
+    <table>
+      <tr><th>Command</th><th>Kaam</th></tr>
+      <tr><td><code>pm2 status</code></td><td>Server online hai ya nahi</td></tr>
+      <tr><td><code>pm2 logs olx-server</code></td><td>Live server logs</td></tr>
+      <tr><td><code>pm2 restart olx-server --update-env</code></td><td>Restart (env reload ke saath)</td></tr>
+      <tr><td><code>pm2 save</code></td><td>Process list save (reboot ke liye)</td></tr>
+      <tr><td><code>sudo nginx -t</code></td><td>Nginx config test</td></tr>
+      <tr><td><code>sudo systemctl reload nginx</code></td><td>Nginx reload</td></tr>
+      <tr><td><code>free -h</code></td><td>RAM + Swap usage</td></tr>
+      <tr><td><code>sudo certbot renew --dry-run</code></td><td>SSL renewal test</td></tr>
+      <tr><td><code>curl https://api.awaaz.life/api/v1/categories</code></td><td>API health check</td></tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    <p>Sellkaro — Backend Deployment Runbook · Generated for project handover</p>
+    <p style="margin-top:4px;">Save as PDF: browser me kholo → Ctrl+P → "Save as PDF"</p>
+  </div>
+
+</div>
+</body>
+</html>

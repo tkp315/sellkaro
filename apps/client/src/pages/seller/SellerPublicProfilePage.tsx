@@ -3,7 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchSellerPublicProfile } from '@/modules/seller/ads/services/sellerAdsApi';
 import { useSellerReviews } from '@/modules/shared/review/hooks/useReviews';
 import StarRating from '@/components/ui/StarRating';
+import Pagination from '@/components/ui/Pagination';
 import { useTheme } from '@/hooks/useTheme';
+import { usePagination } from '@/hooks/usePagination';
 import { formatPrice, formatRelativeTime } from '@/utils/format';
 import type { ConditionKey } from '@/lib/colors';
 
@@ -16,6 +18,10 @@ export default function SellerPublicProfilePage() {
     queryFn: () => fetchSellerPublicProfile(userId!),
     enabled: !!userId,
   });
+
+  // All hooks must run before any early return
+  const { data: reviewsData } = useSellerReviews(userId!);
+  const reviewPager = usePagination(reviewsData?.reviews ?? [], 5);
 
   if (isLoading) {
     return (
@@ -56,7 +62,6 @@ export default function SellerPublicProfilePage() {
 
   const { seller, ads } = data;
   const sellerName = seller.profile?.name ?? 'Seller';
-  const { data: reviewsData } = useSellerReviews(userId!);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -206,7 +211,7 @@ export default function SellerPublicProfilePage() {
 
               {/* Individual reviews */}
               <div className="space-y-3">
-                {reviewsData.reviews.map((review) => (
+                {reviewPager.pageItems.map((review) => (
                   <div key={review.id} className="card p-4">
                     <div className="flex items-start gap-3">
                       <div
@@ -231,6 +236,13 @@ export default function SellerPublicProfilePage() {
                   </div>
                 ))}
               </div>
+
+              <Pagination
+                page={reviewPager.page}
+                totalPages={reviewPager.totalPages}
+                onPageChange={reviewPager.goToPage}
+                className="mt-6"
+              />
             </>
           )}
         </div>

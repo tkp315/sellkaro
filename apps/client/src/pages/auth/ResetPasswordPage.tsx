@@ -29,7 +29,7 @@ export default function ResetPasswordPage() {
       <div className="flex min-h-screen items-center justify-center bg-gray-50 px-6 py-12">
         <div className="w-full max-w-sm text-center">
           <Link to="/" className="inline-block mb-6">
-            <span className="text-4xl font-black tracking-tighter text-[#002f34]">OLX</span>
+            <span className="text-4xl font-black tracking-tighter text-[#002f34]">withSell</span>
           </Link>
           <div className="card p-8">
             <p className="text-4xl mb-3">🔗</p>
@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <Link to="/" className="inline-block mb-4">
-            <span className="text-4xl font-black tracking-tighter text-[#002f34]">OLX</span>
+            <span className="text-4xl font-black tracking-tighter text-[#002f34]">withSell</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Set a new password</h1>
           <p className="mt-2 text-sm text-gray-500">Must be at least 8 characters.</p>

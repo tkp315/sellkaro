@@ -22,7 +22,7 @@ export default function RegisterPage() {
             className="mb-8 block text-6xl font-black tracking-tighter"
             style={{ color: theme.colors.accent.DEFAULT }}
           >
-            OLX
+            withSell
           </span>
           <h2 className="text-3xl font-bold leading-snug">
             Start selling &<br />
@@ -53,7 +53,7 @@ export default function RegisterPage() {
               className="text-4xl font-black tracking-tighter"
               style={{ color: theme.colors.brand.DEFAULT }}
             >
-              OLX
+              withSell
             </span>
           </div>
 
@@ -70,7 +70,7 @@ export default function RegisterPage() {
               {asSeller ? 'Create Seller Account' : 'Create your account'}
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              {asSeller ? 'Start selling on OLX for free' : 'Join millions of buyers and sellers'}
+              {asSeller ? 'Start selling on withSell for free' : 'Join millions of buyers and sellers'}
             </p>
           </div>
 

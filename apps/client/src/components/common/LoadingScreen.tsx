@@ -13,7 +13,7 @@ export function LoadingScreen() {
           className="text-5xl font-black tracking-tighter"
           style={{ color: theme.colors.accent.DEFAULT }}
         >
-          OLX
+          withSell
         </span>
         <div className="h-1 w-32 rounded-full overflow-hidden bg-white/20">
           <div

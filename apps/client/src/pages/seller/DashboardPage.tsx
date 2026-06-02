@@ -3,6 +3,8 @@ import { useAuthStore } from '@/store/authStore';
 import { useMyAds, useChangeAdStatus, useDeleteAd } from '@/modules/seller/ads/hooks/useSellerAds';
 import { formatPrice, formatRelativeTime } from '@/utils/format';
 import { useTheme } from '@/hooks/useTheme';
+import { usePagination } from '@/hooks/usePagination';
+import Pagination from '@/components/ui/Pagination';
 import type { AdStatusKey } from '@/lib/colors';
 import type { AdStatus } from '@/modules/seller/ads/types';
 
@@ -15,6 +17,8 @@ export default function SellerDashboardPage() {
 
   const activeCount = ads.filter((a) => a.status === 'ACTIVE').length;
   const totalViews = ads.reduce((sum, a) => sum + a.viewCount, 0);
+
+  const { page, goToPage, totalPages, pageItems } = usePagination(ads, 8);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
@@ -67,7 +71,7 @@ export default function SellerDashboardPage() {
       )}
 
       <div className="space-y-3">
-        {ads.map((ad) => {
+        {pageItems.map((ad) => {
           const cover = ad.images.find((i) => i.isCover) ?? ad.images[0];
           const statusStyle = getAdStatusStyle(ad.status as AdStatusKey);
 
@@ -168,6 +172,8 @@ export default function SellerDashboardPage() {
           );
         })}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} className="mt-8" />
     </div>
   );
 }

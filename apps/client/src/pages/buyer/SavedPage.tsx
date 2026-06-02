@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useWishlist, useToggleWishlist } from '@/modules/buyer/wishlist/hooks/useWishlist';
 import { useTheme } from '@/hooks/useTheme';
+import { usePagination } from '@/hooks/usePagination';
+import Pagination from '@/components/ui/Pagination';
 import { formatPrice, formatRelativeTime } from '@/utils/format';
 import type { ConditionKey } from '@/lib/colors';
 
@@ -8,6 +10,7 @@ export default function SavedPage() {
   const { data: ads = [], isLoading } = useWishlist();
   const toggleWishlist = useToggleWishlist();
   const { theme, getConditionStyle } = useTheme();
+  const { page, goToPage, totalPages, pageItems } = usePagination(ads, 12);
 
   if (isLoading) {
     return (
@@ -56,7 +59,7 @@ export default function SavedPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {ads.map((ad) => {
+          {pageItems.map((ad) => {
             const cover = ad.images[0]?.url;
             const condStyle = getConditionStyle(ad.condition as ConditionKey);
             return (
@@ -108,6 +111,10 @@ export default function SavedPage() {
             );
           })}
         </div>
+      )}
+
+      {ads.length > 0 && (
+        <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} className="mt-8" />
       )}
     </div>
   );

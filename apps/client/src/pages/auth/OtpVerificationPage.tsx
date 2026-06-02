@@ -83,7 +83,7 @@ export default function OtpVerificationPage() {
             className="text-4xl font-black tracking-tighter"
             style={{ color: theme.colors.brand.DEFAULT }}
           >
-            OLX
+            withSell
           </span>
         </div>
 

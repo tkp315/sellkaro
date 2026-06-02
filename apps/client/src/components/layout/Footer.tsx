@@ -43,7 +43,7 @@ export function Footer() {
               className="text-3xl font-black tracking-tighter"
               style={{ color: theme.colors.accent.DEFAULT }}
             >
-              OLX
+              withSell
             </span>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               India's #1 marketplace for buying and selling used goods. Free to list, zero commission.
@@ -77,7 +77,7 @@ export function Footer() {
 
         <div className="mt-10 border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/40">
-            © {new Date().getFullYear()} OLX Clone. All rights reserved.
+            © {new Date().getFullYear()} withSell. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-white/40">
             <Link to="/terms" className="hover:text-white transition">Terms</Link>

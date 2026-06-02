@@ -24,13 +24,13 @@ function baseTemplate(content: string): string {
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,.08)">
         <tr><td style="background:#002f34;padding:24px 32px">
-          <span style="color:#ffca28;font-size:24px;font-weight:900;letter-spacing:-1px">OLX</span>
+          <span style="color:#ffca28;font-size:24px;font-weight:900;letter-spacing:-1px">withSell</span>
         </td></tr>
         <tr><td style="padding:32px">
           ${content}
         </td></tr>
         <tr><td style="background:#f1f5f9;padding:16px 32px;text-align:center">
-          <p style="margin:0;font-size:12px;color:#94a3b8">© OLX App · You're receiving this because you have an account with us.</p>
+          <p style="margin:0;font-size:12px;color:#94a3b8">© withSell App · You're receiving this because you have an account with us.</p>
         </td></tr>
       </table>
     </td></tr>
@@ -50,7 +50,7 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
 
 export function welcomeEmail(name: string): string {
   return baseTemplate(`
-    <h2 style="margin:0 0 8px;color:#0f172a;font-size:22px">Welcome to OLX, ${name}! 🎉</h2>
+    <h2 style="margin:0 0 8px;color:#0f172a;font-size:22px">Welcome to withSell, ${name}! 🎉</h2>
     <p style="margin:0 0 20px;color:#64748b;font-size:15px;line-height:1.6">
       Your account is ready. Start browsing millions of listings or post your first ad — it's completely free.
     </p>

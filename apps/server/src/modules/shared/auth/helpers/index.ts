@@ -69,7 +69,7 @@ export async function sendVerificationEmail(to: string, token: string): Promise<
   await client.emails.send({
     from,
     to: [to],
-    subject: 'Verify your email – OLX',
+    subject: 'Verify your email – withSell',
     html: `<p>Hi! Click <a href="${url}">here</a> to verify your email address. This link expires in 24 hours.</p>`,
   });
 }
@@ -81,7 +81,7 @@ export async function sendPasswordResetEmail(to: string, token: string): Promise
   await client.emails.send({
     from,
     to: [to],
-    subject: 'Reset your password – OLX',
+    subject: 'Reset your password – withSell',
     html: `<p>Click <a href="${url}">here</a> to reset your password. This link expires in 1 hour.</p>`,
   });
 }
@@ -91,7 +91,7 @@ export async function sendOtpEmail(to: string, otp: string): Promise<void> {
   await client.emails.send({
     from,
     to: [to],
-    subject: 'Your OTP Code – OLX',
+    subject: 'Your OTP Code – withSell',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:420px;margin:0 auto;padding:24px">
         <h2 style="color:#002f34;margin-bottom:8px">Your Verification Code</h2>

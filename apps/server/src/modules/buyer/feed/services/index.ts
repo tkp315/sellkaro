@@ -32,10 +32,15 @@ export async function getFeed(filters: FeedFilters) {
     if (maxPrice !== undefined) where.price.lte = maxPrice;
   }
   if (search) {
-    where.OR = [
-      { title: { contains: search, mode: 'insensitive' } },
-      { description: { contains: search, mode: 'insensitive' } },
-    ];
+    // Split into words → every word must appear (partial, case-insensitive)
+    // in title OR description. So "iphone black" matches "iPhone 14 - Black".
+    const terms = search.trim().split(/\s+/).filter(Boolean);
+    where.AND = terms.map((term) => ({
+      OR: [
+        { title: { contains: term, mode: 'insensitive' } },
+        { description: { contains: term, mode: 'insensitive' } },
+      ],
+    }));
   }
 
   const orderBy: Prisma.SellerAdOrderByWithRelationInput =

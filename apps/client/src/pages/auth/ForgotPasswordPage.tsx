@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <Link to="/" className="inline-block mb-4">
-            <span className="text-4xl font-black tracking-tighter text-[#002f34]">OLX</span>
+            <span className="text-4xl font-black tracking-tighter text-[#002f34]">withSell</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Forgot your password?</h1>
           <p className="mt-2 text-sm text-gray-500">

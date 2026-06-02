@@ -185,7 +185,7 @@ export default function CartPage() {
             </div>
 
             <p className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-700">
-              💡 OLX is a peer-to-peer marketplace. Contact each seller directly to negotiate and purchase.
+              💡 withSell is a peer-to-peer marketplace. Contact each seller directly to negotiate and purchase.
             </p>
 
             <Link
