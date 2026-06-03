@@ -24,7 +24,13 @@ export default function ChatConversationPage() {
   const [text, setText] = useState('');
   const [mediaUploading, setMediaUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const qc = useQueryClient();
+
+  // Scroll to latest message when messages load or a new one arrives
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chat?.messages]);
 
   // Join socket room for real-time messages (re-joins on reconnect too)
   useEffect(() => {
@@ -72,7 +78,6 @@ export default function ChatConversationPage() {
     try {
       const [result] = await uploadFiles([file]);
       sendMessage.mutate({
-        content: '',
         mediaUrl: result!.url,
         mediaType: isVideo ? 'video' : 'image',
         awsUrl: result!.awsUrl,
@@ -149,7 +154,7 @@ export default function ChatConversationPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gray-50">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gray-50" id="messages-container">
         {chat.messages.length === 0 && (
           <p className="text-center text-sm text-gray-400 py-8">No messages yet. Say hello!</p>
         )}
@@ -197,6 +202,8 @@ export default function ChatConversationPage() {
             </div>
           );
         })}
+        {/* Scroll anchor */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Typing phone warning */}

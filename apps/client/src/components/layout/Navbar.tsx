@@ -30,8 +30,12 @@ export function Navbar() {
   useEffect(() => {
     if (geo.city) {
       setCityInput(geo.city);
-      applyCity(geo.city);
+      // Only update search params when already on the feed — don't navigate user away from other pages
+      if (window.location.pathname === '/') {
+        setSearchParams((p) => { p.set('city', geo.city!); return p; }, { replace: true });
+      }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geo.city]);
 
   useEffect(() => {
@@ -70,6 +74,11 @@ export function Navbar() {
   const cartCount = cartData?.count ?? 0;
   const { data: notifData } = useNotificationUnreadCount();
   const notifCount = notifData?.count ?? 0;
+
+  // Keep search input in sync with the URL ?search= param
+  useEffect(() => {
+    setSearch(searchParams.get('search') ?? '');
+  }, [searchParams]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,7 +218,7 @@ export function Navbar() {
                 </Link>
               ) : (
                 <button
-                  onClick={() => becomeSeller.mutate()}
+                  onClick={() => { if (window.confirm('Upgrade your account to Seller? You can start listing items right away.')) becomeSeller.mutate(); }}
                   disabled={becomeSeller.isPending}
                   className="hidden sm:inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition hover:opacity-90 disabled:opacity-60"
                   style={{ backgroundColor: theme.colors.accent.DEFAULT, color: theme.colors.brand.DEFAULT }}
@@ -346,7 +355,7 @@ export function Navbar() {
                         </>
                       ) : (
                         <button
-                          onClick={() => { setMenuOpen(false); becomeSeller.mutate(); }}
+                          onClick={() => { setMenuOpen(false); if (window.confirm('Upgrade your account to Seller? You can start listing items right away.')) becomeSeller.mutate(); }}
                           disabled={becomeSeller.isPending}
                           className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-60"
                           style={{ color: theme.colors.brand.DEFAULT }}
