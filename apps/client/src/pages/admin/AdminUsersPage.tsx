@@ -100,7 +100,12 @@ export default function AdminUsersPage() {
                 <td className="px-4 py-3">
                   <select
                     value={u.role}
-                    onChange={(e) => changeRole.mutate({ id: u.id, role: e.target.value })}
+                    onChange={(e) => {
+                      const newRole = e.target.value;
+                      if (window.confirm(`Change ${u.email}'s role to ${newRole}?`)) {
+                        changeRole.mutate({ id: u.id, role: newRole });
+                      }
+                    }}
                     className={`rounded-full px-2 py-0.5 text-xs font-semibold border-0 cursor-pointer ${roleBadge[u.role] ?? 'bg-gray-100 text-gray-600'}`}
                   >
                     {ROLES.filter(Boolean).map((r) => <option key={r} value={r}>{r}</option>)}

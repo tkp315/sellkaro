@@ -16,7 +16,7 @@ export interface RateLimitConfig {
 }
 
 async function rateLimitConfig(): Promise<RateLimitConfig> {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'prod';
 
   return {
     // Global - sabke liye

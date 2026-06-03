@@ -27,6 +27,7 @@ export function useToggleWishlist() {
     mutationFn: (adId: string) => wishlistApi.toggle(adId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+      void queryClient.invalidateQueries({ queryKey: ['wishlist', 'ids'] });
     },
   });
 }

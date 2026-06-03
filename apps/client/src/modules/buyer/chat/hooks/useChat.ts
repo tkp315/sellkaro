@@ -14,9 +14,11 @@ export function useMyChats() {
 }
 
 export function useChatDetail(chatId: string) {
+  const { isAuthenticated } = useAuthStore();
   return useQuery({
     queryKey: ['chat', chatId],
     queryFn: () => chatApi.getChat(chatId),
+    enabled: isAuthenticated,
     refetchInterval: 30_000, // socket handles real-time, poll as fallback only
   });
 }

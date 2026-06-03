@@ -6,12 +6,22 @@ export async function toggleWishlist(userId: string, adId: string) {
   });
 
   if (existing) {
-    await prisma.wishlist.delete({ where: { id: existing.id } });
+    // Catch P2025 (record not found) from a concurrent delete
+    try {
+      await prisma.wishlist.delete({ where: { id: existing.id } });
+    } catch {
+      // Already removed by a concurrent request — treat as removed
+    }
     return { saved: false };
   }
 
-  await prisma.wishlist.create({ data: { userId, adId } });
-  return { saved: true };
+  try {
+    await prisma.wishlist.create({ data: { userId, adId } });
+    return { saved: true };
+  } catch {
+    // P2002 (unique constraint): a concurrent request already created it — treat as saved
+    return { saved: true };
+  }
 }
 
 export async function getWishlist(userId: string) {

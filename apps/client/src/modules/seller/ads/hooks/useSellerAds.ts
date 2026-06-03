@@ -24,7 +24,7 @@ export function useUpdateAd(adId: string) {
     mutationFn: (dto: UpdateAdDto) => api.updateAd(adId, dto),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['seller-ads'] });
-      qc.invalidateQueries({ queryKey: ['seller-ad', adId] });
+      if (adId) qc.invalidateQueries({ queryKey: ['seller-ad', adId] });
     },
   });
 }

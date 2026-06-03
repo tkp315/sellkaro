@@ -35,9 +35,17 @@ export function verifyRefreshToken(token: string): JwtPayload {
 
 export function getRefreshTokenExpiry(): Date {
   const env = getEnv();
-  const expiry = String(env['JWT_REFRESH_EXPIRY']);
-  const days = parseInt(expiry.replace('d', '')) || 7;
-  return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+  const expiry = String(env['JWT_REFRESH_EXPIRY'] || '7d');
+  const match = expiry.match(/^(\d+)([dhms])$/);
+  if (!match) return new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const value = parseInt(match[1]!, 10);
+  const unit = match[2];
+  const ms =
+    unit === 'd' ? value * 24 * 60 * 60 * 1000 :
+    unit === 'h' ? value * 60 * 60 * 1000 :
+    unit === 'm' ? value * 60 * 1000 :
+    value * 1000;
+  return new Date(Date.now() + ms);
 }
 
 // ─── Password ─────────────────────────────────────────────────────────────────
@@ -57,7 +65,7 @@ export function generateToken(): string {
 }
 
 export function generateOtp(): string {
-  return String(Math.floor(100000 + Math.random() * 900000));
+  return String(crypto.randomInt(100000, 1000000));
 }
 
 // ─── Email ────────────────────────────────────────────────────────────────────

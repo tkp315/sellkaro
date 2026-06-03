@@ -96,6 +96,7 @@ export async function revealPhone(adId: string, userId: string) {
     update: {},
   });
 
+  // Notify only on the FIRST reveal (wasNew is null means no prior record)
   if (!wasNew) {
     const buyer = await prisma.user.findUnique({ where: { id: userId }, select: { profile: { select: { name: true } } } });
     void notifyInterestShown(ad.userId, buyer?.profile?.name ?? 'Someone', adId, ad.title);

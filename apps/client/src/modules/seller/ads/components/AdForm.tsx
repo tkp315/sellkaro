@@ -175,14 +175,19 @@ export default function AdForm({ mode, ad }: Props) {
     const imageUrls = doneItems.map((m) => m.url!);
     const imageAwsUrls = doneItems.map((m) => m.awsUrl ?? null);
 
-    if (mode === 'edit') {
-      await updateAd.mutateAsync({ ...data, imageUrls: imageUrls.length ? imageUrls : undefined, imageAwsUrls: imageAwsUrls.length ? imageAwsUrls : undefined });
-      showToast('Ad updated!', 'success');
-    } else {
-      await createAd.mutateAsync({ ...data, imageUrls: imageUrls.length ? imageUrls : undefined, imageAwsUrls: imageAwsUrls.length ? imageAwsUrls : undefined });
-      showToast('Ad posted!', 'success');
+    try {
+      if (mode === 'edit') {
+        // In edit mode, always send imageUrls (even empty array) so server knows to clear images
+        await updateAd.mutateAsync({ ...data, imageUrls, imageAwsUrls });
+        showToast('Ad updated!', 'success');
+      } else {
+        await createAd.mutateAsync({ ...data, imageUrls: imageUrls.length ? imageUrls : undefined, imageAwsUrls: imageAwsUrls.length ? imageAwsUrls : undefined });
+        showToast('Ad posted!', 'success');
+      }
+      navigate('/seller');
+    } catch {
+      // Error is displayed via mutationError banner — no additional handling needed
     }
-    navigate('/seller');
   };
 
   const isPending = mode === 'edit' ? updateAd.isPending : createAd.isPending;

@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const createAdSchema = z.object({
   title: z.string().min(3, 'At least 3 characters').max(100),
   description: z.string().min(10, 'At least 10 characters').max(2000),
-  price: z.number({ error: 'Price is required' }).positive('Price must be positive'),
+  price: z.number({ invalid_type_error: 'Price is required' }).positive('Price must be positive'),
   condition: z.enum(['NEW', 'LIKE_NEW', 'GOOD', 'FAIR']),
   city: z.string().min(2, 'City is required'),
   area: z.string().optional(),
