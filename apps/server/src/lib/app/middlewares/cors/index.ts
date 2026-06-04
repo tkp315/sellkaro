@@ -2,15 +2,10 @@ import { CorsConfig } from "@config/app/middlewares/cors/index.js";
 import { Application } from "express";
 import cors from 'cors';
 
-// Production domains that are always allowed (in addition to CORS_ORIGINS env)
-const ALWAYS_ALLOWED = [
-  'https://awaaz.life',
-  'https://www.awaaz.life',
-];
-
+// Allowed origins are fully driven by the CORS_ORIGINS env var (comma-separated),
+// plus any Vercel deployment and localhost for convenience.
 function isAllowedOrigin(origin: string, configured: string[]): boolean {
   if (configured.includes(origin)) return true;
-  if (ALWAYS_ALLOWED.includes(origin)) return true;
   // Allow any Vercel deployment (production + preview URLs)
   if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
   // Allow localhost (any port) for dev
