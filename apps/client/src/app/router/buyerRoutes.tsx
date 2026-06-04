@@ -8,13 +8,11 @@ import ChatInboxPage from '@/pages/buyer/ChatInboxPage';
 import ChatConversationPage from '@/pages/buyer/ChatConversationPage';
 
 export const buyerRoutes: RouteObject[] = [
-  // Public — browsing requires no account
-  { index: true, element: <FeedPage /> },
-  { path: 'product/:id', element: <ProductDetailPage /> },
-  // Protected — login required
   {
     element: <ProtectedRoute />,
     children: [
+      { index: true, element: <FeedPage /> },
+      { path: 'product/:id', element: <ProductDetailPage /> },
       { path: 'saved', element: <SavedPage /> },
       { path: 'cart', element: <CartPage /> },
       { path: 'chats', element: <ChatInboxPage /> },

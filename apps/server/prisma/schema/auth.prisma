@@ -6,9 +6,8 @@ model User {
   role             Role      @default(BUYER)
   isVerified       Boolean   @default(false)
   isBanned         Boolean   @default(false)
-  emailVerifyToken       String?
-  emailVerifyTokenExpiry DateTime?
-  resetToken             String?
+  emailVerifyToken String?
+  resetToken       String?
   resetTokenExpiry DateTime?
   otpCode          String?
   otpExpiry        DateTime?

@@ -193,7 +193,7 @@ export default function AdminCategoriesPage() {
             <div key={i} className="h-16 rounded-xl bg-gray-100 animate-pulse" />
           ))}
         </div>
-      ) : pageItems.length === 0 ? (
+      ) : categories.length === 0 ? (
         <div className="py-20 text-center text-gray-400">
           <p className="text-4xl mb-3">📂</p>
           <p>No categories yet. Add one above.</p>

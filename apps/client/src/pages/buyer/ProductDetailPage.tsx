@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useAdDetail } from '@/modules/buyer/feed/hooks/useFeed';
@@ -19,9 +19,6 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: ad, isLoading, isError } = useAdDetail(id!);
   const [activeImg, setActiveImg] = useState(0);
-
-  // Reset image index when navigating between products (React Router reuses this component)
-  useEffect(() => { setActiveImg(0); }, [id]);
   const [phone, setPhone] = useState<string | null>(null);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState('');

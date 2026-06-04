@@ -1,4 +1,3 @@
-import { Navigate } from 'react-router-dom';
 import type { RouteObject } from 'react-router-dom';
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
@@ -12,5 +11,4 @@ export const authRoutes: RouteObject[] = [
   { path: 'forgot-password', element: <ForgotPasswordPage /> },
   { path: 'reset-password', element: <ResetPasswordPage /> },
   { path: 'verify-otp', element: <OtpVerificationPage /> },
-  { path: '*', element: <Navigate to="/auth/login" replace /> },
 ];

@@ -49,6 +49,7 @@ export interface RegisterDto {
   password: string;
   name: string;
   phone?: string;
+  role?: 'BUYER' | 'SELLER';
 }
 
 export interface ForgotPasswordDto {

@@ -28,8 +28,8 @@ export const authApi = {
   logout: (refreshToken: string) =>
     api.post('/auth/logout', { refreshToken }),
 
-  googleAuth: (credential: string) =>
-    api.post<ApiResponse<AuthResponse>>('/auth/google', { credential }).then((r) => r.data.data!),
+  googleAuth: (accessToken: string) =>
+    api.post<ApiResponse<AuthResponse>>('/auth/google', { accessToken }).then((r) => r.data.data!),
 
   becomeSeller: () =>
     api.post<ApiResponse<AuthResponse>>('/auth/become-seller').then((r) => r.data.data!),
