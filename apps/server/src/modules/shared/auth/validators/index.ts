@@ -5,7 +5,7 @@ export const registerSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
   name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().optional(),
-  role: z.enum(['BUYER', 'SELLER']).default('BUYER'),
+  // role is ignored — server always assigns BUYER (or ADMIN for the designated admin email)
 });
 
 export const loginSchema = z.object({
@@ -14,7 +14,7 @@ export const loginSchema = z.object({
 });
 
 export const googleAuthSchema = z.object({
-  accessToken: z.string().min(1, 'Google access token is required'),
+  credential: z.string().min(1, 'Google credential is required'),
 });
 
 export const refreshTokenSchema = z.object({

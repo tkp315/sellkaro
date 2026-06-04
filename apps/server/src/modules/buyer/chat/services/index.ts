@@ -24,6 +24,17 @@ export async function getOrCreateChat(buyerId: string, adId: string) {
 }
 
 export async function getChat(chatId: string, userId: string) {
+  const exists = await prisma.chat.count({
+    where: { id: chatId, OR: [{ buyerId: userId }, { sellerId: userId }] },
+  });
+  if (!exists) throw ApiError.notFound('Chat not found');
+
+  // Mark as read BEFORE fetching so the response reflects the updated isRead state
+  await prisma.message.updateMany({
+    where: { chatId, senderId: { not: userId }, isRead: false },
+    data: { isRead: true },
+  });
+
   const chat = await prisma.chat.findFirst({
     where: { id: chatId, OR: [{ buyerId: userId }, { sellerId: userId }] },
     include: {
@@ -33,22 +44,17 @@ export async function getChat(chatId: string, userId: string) {
       seller: { select: { id: true, profile: { select: { name: true, avatar: true } } } },
     },
   });
-  if (!chat) throw ApiError.notFound('Chat not found');
 
-  await prisma.message.updateMany({
-    where: { chatId, senderId: { not: userId }, isRead: false },
-    data: { isRead: true },
-  });
-
-  return chat;
+  return chat!;
 }
 
 export async function sendMessage(
   chatId: string,
   senderId: string,
-  content: string,
+  content: string | undefined,
   media?: { mediaUrl?: string; mediaType?: string; awsUrl?: string },
 ) {
+  if (!content && !media?.mediaUrl) throw ApiError.badRequest('Message must have content or media');
   const chat = await prisma.chat.findFirst({
     where: { id: chatId, OR: [{ buyerId: senderId }, { sellerId: senderId }] },
   });
@@ -76,7 +82,7 @@ export async function sendMessage(
     const receiverId = fullChat.buyerId === senderId ? fullChat.sellerId : fullChat.buyerId;
     const senderProfile = fullChat.buyerId === senderId ? fullChat.buyer.profile : fullChat.seller.profile;
     const senderName = senderProfile?.name ?? 'Someone';
-    void notifyNewMessage(receiverId, senderName, fullChat.ad.title, chatId, content.slice(0, 80));
+    void notifyNewMessage(receiverId, senderName, fullChat.ad.title, chatId, (content ?? '').slice(0, 80));
   }
 
   return message;
@@ -94,9 +100,24 @@ export async function getMyChats(userId: string) {
     },
   });
 
+  if (chats.length === 0) return [];
+
+  // Compute per-chat unread counts in a single grouped query
+  const unreadGroups = await prisma.message.groupBy({
+    by: ['chatId'],
+    where: {
+      chatId: { in: chats.map((c) => c.id) },
+      senderId: { not: userId },
+      isRead: false,
+    },
+    _count: { _all: true },
+  });
+
+  const unreadMap = Object.fromEntries(unreadGroups.map((r) => [r.chatId, r._count._all]));
+
   return chats.map((chat) => ({
     ...chat,
-    unreadCount: 0,
+    unreadCount: unreadMap[chat.id] ?? 0,
   }));
 }
 

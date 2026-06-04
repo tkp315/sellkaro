@@ -48,8 +48,9 @@ export function useVerifyOtp() {
     mutationFn: (dto: { email: string; otp: string }) => authApi.verifyOtp(dto),
     onSuccess: (data) => {
       login(data.user, data.tokens);
-      const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname;
-      navigate(from ?? (data.user.role === 'SELLER' ? '/seller' : '/'));
+      const from = (location.state as { from?: Location } | null)?.from;
+      const redirect = from ? `${from.pathname}${from.search}${from.hash}` : null;
+      navigate(redirect ?? (data.user.role === 'SELLER' ? '/seller' : '/'));
     },
   });
 }

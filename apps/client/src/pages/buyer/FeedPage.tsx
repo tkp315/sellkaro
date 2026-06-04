@@ -61,6 +61,7 @@ export default function FeedPage() {
       setCityInput(geo.city);
       setSearchParams((p) => { p.set('city', geo.city!); return p; }, { replace: true });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geo.city]);
 
   const applyCity = (val: string) => {
@@ -84,7 +85,7 @@ export default function FeedPage() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex gap-2 overflow-x-auto py-3 scrollbar-hide">
             <button
-              onClick={() => set('categoryId', undefined)}
+              onClick={() => setFilters((p) => ({ ...p, categoryId: undefined, subcategoryId: undefined, page: 1 }))}
               className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition ${
                 !filters.categoryId ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
@@ -95,7 +96,7 @@ export default function FeedPage() {
             {categories.map((c) => (
               <button
                 key={c.id}
-                onClick={() => set('categoryId', c.id)}
+                onClick={() => setFilters((p) => ({ ...p, categoryId: c.id, subcategoryId: undefined, page: 1 }))}
                 className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition ${
                   filters.categoryId === c.id ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
@@ -187,6 +188,7 @@ export default function FeedPage() {
             <div className="flex flex-col gap-0.5">
               <label className="text-xs text-gray-400">Subcategory</label>
               <select
+                value={filters.subcategoryId ?? ''}
                 className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none"
                 style={{ '--tw-ring-color': theme.colors.brand.DEFAULT } as React.CSSProperties}
                 onChange={(e) => set('subcategoryId', e.target.value || undefined)}
@@ -264,7 +266,8 @@ export default function FeedPage() {
             <div className="flex flex-col gap-0.5">
               <label className="text-xs text-gray-400">Min ₹</label>
               <input
-                type="text"
+                type="number"
+                min={0}
                 placeholder="0"
                 className="w-24 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none"
                 onChange={(e) => set('minPrice', e.target.value ? Number(e.target.value) : undefined)}
@@ -274,7 +277,8 @@ export default function FeedPage() {
             <div className="flex flex-col gap-0.5">
               <label className="text-xs text-gray-400">Max ₹</label>
               <input
-                type="text"
+                type="number"
+                min={0}
                 placeholder="Any"
                 className="w-24 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none"
                 onChange={(e) => set('maxPrice', e.target.value ? Number(e.target.value) : undefined)}

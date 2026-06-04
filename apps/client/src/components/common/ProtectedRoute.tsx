@@ -8,14 +8,19 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ roles }: ProtectedRouteProps) {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, logout } = useAuthStore();
   const location = useLocation();
 
   if (!isAuthenticated) {
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
-  if (!user) return <LoadingScreen />;
+  if (!user) {
+    // isAuthenticated=true but user=null means corrupted/stale storage.
+    // Clear auth state and redirect to re-login rather than hanging on a loading screen.
+    logout();
+    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+  }
 
   if (roles && !roles.includes(user.role)) {
     return <Navigate to="/" replace />;

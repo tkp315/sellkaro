@@ -14,23 +14,27 @@ const errorHandler = (err: Error | ApiError, req: Request, res: Response, _next:
   let errors: any[] | undefined;
   let stack: string | undefined;
 
+  const isDev = process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development';
+
   // Check if it's our custom ApiError
   if (err instanceof ApiError) {
     statusCode = err.statusCode;
     message = err.message;
     errors = err.errors;
-  } else if (err instanceof Error) {
+  } else if (err instanceof Error && isDev) {
+    // In production, keep the generic message to avoid leaking internals
+    // (Prisma table names, constraint names, JWT details, etc.)
     message = err.message || message;
   }
 
-  // Include stack trace in development
-  if (process.env.NODE_ENV === 'dev') {
+  // Include stack trace in development only
+  if (isDev) {
     stack = err.stack;
   }
 
   // Log error
   console.error(`❌ [${req.method}] ${req.originalUrl} - ${statusCode}: ${message}`);
-  if (process.env.NODE_ENV === 'dev' && stack) {
+  if (isDev && stack) {
     console.error(stack);
   }
 

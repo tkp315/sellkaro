@@ -57,6 +57,7 @@ export async function createReport(adminId: string, dto: {
 export async function resolveReport(adminId: string, reportId: string, adminNote?: string) {
   const report = await prisma.report.findUnique({ where: { id: reportId } });
   if (!report) throw ApiError.notFound('Report not found');
+  if (report.status === 'RESOLVED') return { resolved: true }; // already resolved — idempotent
 
   await prisma.report.update({ where: { id: reportId }, data: { status: 'RESOLVED', adminNote } });
   await prisma.adminLog.create({ data: { adminId, action: 'RESOLVE_REPORT', targetType: 'report', targetId: reportId, note: adminNote } });
@@ -66,6 +67,7 @@ export async function resolveReport(adminId: string, reportId: string, adminNote
 export async function dismissReport(adminId: string, reportId: string, adminNote?: string) {
   const report = await prisma.report.findUnique({ where: { id: reportId } });
   if (!report) throw ApiError.notFound('Report not found');
+  if (report.status === 'DISMISSED') return { dismissed: true }; // already dismissed — idempotent
 
   await prisma.report.update({ where: { id: reportId }, data: { status: 'DISMISSED', adminNote } });
   await prisma.adminLog.create({ data: { adminId, action: 'DISMISS_REPORT', targetType: 'report', targetId: reportId, note: adminNote } });

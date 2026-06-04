@@ -12,6 +12,7 @@ export const createAdSchema = z.object({
   categoryId: z.string().min(1, 'Category is required'),
   subcategoryId: z.string().optional(),
   imageUrls: z.array(z.string().url()).max(10).optional(),
+  imageAwsUrls: z.array(z.string()).max(10).optional(),
 });
 
 export const updateAdSchema = z.object({
@@ -24,6 +25,7 @@ export const updateAdSchema = z.object({
   lat: z.number().optional(),
   lng: z.number().optional(),
   imageUrls: z.array(z.string().url()).max(10).optional(),
+  imageAwsUrls: z.array(z.string()).max(10).optional(),
 });
 
 export const changeStatusSchema = z.object({
