@@ -3,6 +3,7 @@ export interface RegisterDto {
   password: string;
   name: string;
   phone?: string;
+  role?: 'BUYER' | 'SELLER';
 }
 
 export interface LoginDto {
@@ -11,7 +12,7 @@ export interface LoginDto {
 }
 
 export interface GoogleAuthDto {
-  credential: string;
+  accessToken: string;
 }
 
 export interface ForgotPasswordDto {

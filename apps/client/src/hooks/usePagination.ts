@@ -9,25 +9,20 @@ export function usePagination<T>(items: T[], pageSize = 12) {
 
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
 
-  // Snap page state when the list shrinks (async correction for the next render cycle)
+  // If the list shrinks (e.g. after deleting) and current page is now out of range, snap back.
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  // Clamp synchronously in the memo so we never render an empty slice in the
-  // frame BEFORE the above effect fires (avoids the one-frame empty-page flash).
-  const clampedPage = Math.min(page, totalPages);
-
   const pageItems = useMemo(
-    () => items.slice((clampedPage - 1) * pageSize, clampedPage * pageSize),
-    [items, clampedPage, pageSize],
+    () => items.slice((page - 1) * pageSize, page * pageSize),
+    [items, page, pageSize],
   );
 
   const goToPage = (next: number) => {
-    const clamped = Math.max(1, Math.min(next, totalPages));
-    setPage(clamped);
+    setPage(next);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  return { page: clampedPage, setPage, goToPage, totalPages, pageItems };
+  return { page, setPage, goToPage, totalPages, pageItems };
 }

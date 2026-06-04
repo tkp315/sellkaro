@@ -44,12 +44,10 @@ export async function unbanUser(adminId: string, userId: string, note?: string) 
 }
 
 export async function changeUserRole(adminId: string, userId: string, role: string) {
-  if (adminId === userId) throw ApiError.badRequest('Cannot change your own role');
-
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw ApiError.notFound('User not found');
 
   await prisma.user.update({ where: { id: userId }, data: { role: role as any } });
-  await prisma.adminLog.create({ data: { adminId, action: 'CHANGE_ROLE', targetType: 'user', targetId: userId, note: `Role changed to ${role}` } });
+  await prisma.adminLog.create({ data: { adminId, action: 'WARN_USER', targetType: 'user', targetId: userId, note: `Role changed to ${role}` } });
   return { role };
 }

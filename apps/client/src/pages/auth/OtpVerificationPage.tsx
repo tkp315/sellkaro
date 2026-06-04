@@ -33,14 +33,6 @@ export default function OtpVerificationPage() {
   const otp = digits.join('');
   const isComplete = otp.length === 6;
 
-  // Auto-submit when all 6 digits are filled
-  useEffect(() => {
-    if (isComplete && !verifyOtp.isPending && !verifyOtp.isSuccess && !verifyOtp.isError) {
-      verifyOtp.mutate({ email, otp });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otp]);
-
   const handleChange = (idx: number, val: string) => {
     // Allow paste of full OTP
     if (val.length > 1) {

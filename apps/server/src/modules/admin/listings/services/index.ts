@@ -29,7 +29,6 @@ export async function getAds({ page = 1, limit = 20, search = '', status = '' }:
 export async function removeAd(adminId: string, adId: string, note?: string) {
   const ad = await prisma.sellerAd.findUnique({ where: { id: adId } });
   if (!ad) throw ApiError.notFound('Ad not found');
-  if (ad.status === 'REMOVED') return { removed: true }; // idempotent — no duplicate log or notification
 
   await prisma.sellerAd.update({ where: { id: adId }, data: { status: 'REMOVED' as any } });
   await prisma.adminLog.create({ data: { adminId, action: 'REMOVE_AD', targetType: 'ad', targetId: adId, note } });

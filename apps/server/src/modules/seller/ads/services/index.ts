@@ -73,22 +73,18 @@ export async function updateAd(userId: string, adId: string, dto: UpdateAdDto) {
   if (!ad) throw ApiError.notFound('Ad not found');
 
   if (dto.imageUrls !== undefined) {
-    // Atomic replacement: both operations run in a transaction so a failure
-    // can't leave the ad without images (deleteMany succeeded but createMany failed).
-    await prisma.$transaction([
-      prisma.adImage.deleteMany({ where: { adId } }),
-      ...(dto.imageUrls.length
-        ? [prisma.adImage.createMany({
-            data: dto.imageUrls.map((url, i) => ({
-              adId,
-              url,
-              awsUrl: dto.imageAwsUrls?.[i] ?? null,
-              order: i,
-              isCover: i === 0,
-            })),
-          })]
-        : []),
-    ]);
+    await prisma.adImage.deleteMany({ where: { adId } });
+    if (dto.imageUrls.length) {
+      await prisma.adImage.createMany({
+        data: dto.imageUrls.map((url, i) => ({
+          adId,
+          url,
+          awsUrl: dto.imageAwsUrls?.[i] ?? null,
+          order: i,
+          isCover: i === 0,
+        })),
+      });
+    }
   }
 
   return prisma.sellerAd.update({

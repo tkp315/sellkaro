@@ -16,11 +16,7 @@ async function corsConfig(): Promise<CorsConfig> {
   const envOrigins = originsString.split(',').map((o) => o.trim()).filter(Boolean);
   const origins = isProduction
     ? envOrigins
-    : ['http://localhost:5173', 'http://localhost:8081']; // Dev: web + expo
-
-  if (isProduction && origins.length === 0) {
-    throw new Error('CORS_ORIGINS environment variable must be set in production (comma-separated list of allowed frontend origins)');
-  }
+    : ['http://localhost:5173', 'http://localhost:8081']; //Dev: web + expo;
 
   return {
     origins: origins.length ? origins : ['http://localhost:5173'],
