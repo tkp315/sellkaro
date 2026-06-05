@@ -34,7 +34,7 @@ export default function LoginPage() {
             {asSeller ? (
               <>Start Selling on<br /><span style={{ color: theme.colors.accent.DEFAULT }}>withSell Today</span></>
             ) : (
-              <>India's #1<br /><span style={{ color: theme.colors.accent.DEFAULT }}>Used Goods</span> Marketplace</>
+              <>Buy & Sell<br /><span style={{ color: theme.colors.accent.DEFAULT }}>Used Goods</span> Marketplace</>
             )}
           </h2>
           <p className="mt-4 text-base text-white/70 leading-relaxed">

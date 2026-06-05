@@ -46,7 +46,7 @@ export function Footer() {
               withSell
             </span>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
-              India's #1 marketplace for buying and selling used goods. Free to list, zero commission.
+              Your marketplace for buying and selling used goods. Free to list, zero commission.
             </p>
             <div className="mt-4 flex gap-3">
               {['🐦', '📘', '📷', '▶️'].map((icon, i) => (
