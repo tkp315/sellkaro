@@ -16,8 +16,8 @@ export default function ContactPage() {
 
       <div className="grid sm:grid-cols-3 gap-4 mb-10">
         {[
-          { icon: '📧', label: 'Email', value: 'support@olxapp.com' },
-          { icon: '📞', label: 'Phone', value: '+91 98765 43210' },
+          { icon: '📧', label: 'Email', value: 'ahirwarkishan214@gmail.com' },
+          { icon: '📞', label: 'Phone', value: '+91 9575695436' },
           { icon: '🕐', label: 'Hours', value: 'Mon–Sat, 9am–6pm' },
         ].map((c) => (
           <div key={c.label} className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center">

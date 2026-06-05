@@ -40,7 +40,7 @@ export default function TermsPage() {
           },
           {
             title: '9. Contact',
-            content: 'For questions about these terms, please contact us at legal@olxapp.com.',
+            content: 'For questions about these terms, please contact us at ahirwarkishan214@gmail.com.',
           },
         ].map((section) => (
           <section key={section.title}>

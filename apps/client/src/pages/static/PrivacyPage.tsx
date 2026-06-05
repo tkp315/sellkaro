@@ -36,7 +36,7 @@ export default function PrivacyPage() {
           },
           {
             title: '8. Contact',
-            content: 'For privacy-related queries, contact us at privacy@olxapp.com.',
+            content: 'For privacy-related queries, contact us at ahirwarkishan214@gmail.com.',
           },
         ].map((section) => (
           <section key={section.title}>

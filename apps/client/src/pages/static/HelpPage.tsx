@@ -65,6 +65,17 @@ export default function HelpPage() {
       <div className="mt-10 rounded-2xl bg-[#002f34] text-white p-6 text-center">
         <p className="text-lg font-semibold mb-1">Still need help?</p>
         <p className="text-white/60 text-sm mb-4">Our support team is available Mon–Sat, 9am–6pm</p>
+
+        <div className="mb-5 flex flex-col sm:flex-row items-center justify-center gap-3 text-sm">
+          <a href="mailto:ahirwarkishan214@gmail.com" className="flex items-center gap-2 text-white/90 hover:text-white transition">
+            📧 ahirwarkishan214@gmail.com
+          </a>
+          <span className="hidden sm:inline text-white/30">·</span>
+          <a href="tel:+919575695436" className="flex items-center gap-2 text-white/90 hover:text-white transition">
+            📞 +91 9575695436
+          </a>
+        </div>
+
         <a href="/contact" className="inline-block rounded-xl bg-[#ffca28] text-[#002f34] font-bold px-6 py-2.5 text-sm hover:opacity-90 transition">
           Contact Support
         </a>
